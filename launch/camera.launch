@@ -7,6 +7,7 @@
   <arg name="xmlrpc_port" default="80"/>
   <arg name="password" default=""/>
   <arg name="timeout_millis" default="500"/>
+  <arg name="publish_viz_images" default="true"/>
 
   <node pkg="o3d3xx"
 	type="o3d3xx_node"
@@ -18,13 +19,20 @@
     <param name="xmlrpc_port" value="$(arg xmlrpc_port)"/>
     <param name="password" value="$(arg password)"/>
     <param name="timeout_millis" value="$(arg timeout_millis)"/>
+    <param name="publish_viz_images" value="$(arg publish_viz_images)"/>
 
     <!-- published topics -->
     <remap from="/cloud" to="/$(arg ns)/$(arg nn)/cloud"/>
     <remap from="/depth" to="/$(arg ns)/$(arg nn)/depth"/>
+    <remap from="/depth_viz" to="/$(arg ns)/$(arg nn)/depth_viz"/>
     <remap from="/amplitude" to="/$(arg ns)/$(arg nn)/amplitude"/>
     <remap from="/confidence" to="/$(arg ns)/$(arg nn)/confidence"/>
     <remap from="/good_bad_pixels" to="/$(arg ns)/$(arg nn)/good_bad_pixels"/>
+
+    <!-- advertised services -->
+    <remap from="/GetVersion" to="/$(arg ns)/$(arg nn)/GetVersion"/>
+    <remap from="/Dump" to="/$(arg ns)/$(arg nn)/Dump"/>
+    <remap from="/Config" to="/$(arg ns)/$(arg nn)/Config"/>
 
   </node>
 

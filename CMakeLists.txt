@@ -15,7 +15,25 @@ find_package(catkin REQUIRED COMPONENTS
 	     sensor_msgs
 	     std_msgs
 	     tf
+	     message_generation
+	     message_runtime
 	     )
+
+#######################################
+## Declare ROS messages and services ##
+#######################################
+
+add_service_files(
+  FILES
+  GetVersion.srv
+  Dump.srv
+  Config.srv
+  )
+
+generate_messages(
+  DEPENDENCIES
+  std_msgs
+  )
 
 ###################################
 ## catkin specific configuration ##
@@ -36,6 +54,11 @@ add_executable(o3d3xx_node src/o3d3xx_node.cpp)
 target_link_libraries(o3d3xx_node
   ${catkin_LIBRARIES}
   ${libo3d3xx_LIBRARIES}
+  )
+
+add_executable(o3d3xx_config_node src/o3d3xx_config_node.cpp)
+target_link_libraries(o3d3xx_config_node
+  ${catkin_LIBRARIES}
   )
 
 #############
