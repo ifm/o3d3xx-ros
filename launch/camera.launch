@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- Command-line arguments -->
+  <arg name="ns" default="o3d3xx"/>
+  <arg name="nn" default="camera"/>
+  <arg name="ip" default="192.168.0.69"/>
+  <arg name="xmlrpc_port" default="80"/>
+  <arg name="password" default=""/>
+  <arg name="timeout_millis" default="500"/>
+
+  <node pkg="o3d3xx"
+	type="o3d3xx_node"
+	ns="$(arg ns)"
+	name="$(arg nn)"
+	output="screen">
+
+    <param name="ip" value="$(arg ip)"/>
+    <param name="xmlrpc_port" value="$(arg xmlrpc_port)"/>
+    <param name="password" value="$(arg password)"/>
+    <param name="timeout_millis" value="$(arg timeout_millis)"/>
+
+    <!-- published topics -->
+    <remap from="/cloud" to="/$(arg ns)/$(arg nn)/cloud"/>
+    <remap from="/depth" to="/$(arg ns)/$(arg nn)/depth"/>
+    <remap from="/amplitude" to="/$(arg ns)/$(arg nn)/amplitude"/>
+    <remap from="/confidence" to="/$(arg ns)/$(arg nn)/confidence"/>
+    <remap from="/good_bad_pixels" to="/$(arg ns)/$(arg nn)/good_bad_pixels"/>
+
+  </node>
+
+  <node pkg="tf"
+	type="static_transform_publisher"
+	ns="$(arg ns)"
+	name="$(arg nn)_tf"
+	args="0 0 0 0 0 0 /base_link /$(arg ns)/$(arg nn)_link 20"/>
+
+</launch>

@@ -1,0 +1,55 @@
+cmake_minimum_required(VERSION 2.8.12)
+project(o3d3xx)
+
+set(CMAKE_MODULE_PATH
+  "${PROJECT_SOURCE_DIR}/cmake"
+  ${CMAKE_MODULE_PATH}
+  )
+find_package(libo3d3xx REQUIRED)
+
+find_package(catkin REQUIRED COMPONENTS
+             image_transport
+             pcl_ros
+	     cv_bridge
+	     roscpp
+	     sensor_msgs
+	     std_msgs
+	     tf
+	     )
+
+###################################
+## catkin specific configuration ##
+###################################
+catkin_package()
+
+#############
+##  Build  ##
+#############
+
+include_directories(
+  ${catkin_INCLUDE_DIRS}
+  ${libo3d3xx_INCLUDE_DIRS}
+  )
+
+add_executable(o3d3xx_node src/o3d3xx_node.cpp)
+
+target_link_libraries(o3d3xx_node
+  ${catkin_LIBRARIES}
+  ${libo3d3xx_LIBRARIES}
+  )
+
+#############
+## Install ##
+#############
+
+file(GLOB o3d3xx_launch_files launch/*.launch)
+install(FILES
+  ${o3d3xx_launch_files}
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
+  )
+
+file(GLOB o3d3xx_rviz_files launch/*.rviz)
+install(FILES
+  ${o3d3xx_rviz_files}
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
+  )
