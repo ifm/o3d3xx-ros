@@ -30,6 +30,7 @@
 #include <o3d3xx/Config.h>
 #include <o3d3xx/Dump.h>
 #include <o3d3xx/GetVersion.h>
+#include <o3d3xx/Rm.h>
 
 class O3D3xxNode
 {
@@ -73,6 +74,7 @@ public:
     this->amplitude_pub_ = it.advertise("/amplitude", 1);
     this->conf_pub_ = it.advertise("/confidence", 1);
     this->good_bad_pub_ = it.advertise("/good_bad_pixels", 1);
+    this->hist_pub_ = it.advertise("/hist", 1);
 
     //----------------------
     // Advertised services
@@ -85,18 +87,22 @@ public:
 				std::placeholders::_2));
 
     this->dump_srv_ =
-      nh.advertiseService<o3d3xx::Dump::Request,
-			  o3d3xx::Dump::Response>
+      nh.advertiseService<o3d3xx::Dump::Request, o3d3xx::Dump::Response>
       ("/Dump", std::bind(&O3D3xxNode::Dump, this,
 			  std::placeholders::_1,
 			  std::placeholders::_2));
 
     this->config_srv_ =
-      nh.advertiseService<o3d3xx::Config::Request,
-			  o3d3xx::Config::Response>
+      nh.advertiseService<o3d3xx::Config::Request, o3d3xx::Config::Response>
       ("/Config", std::bind(&O3D3xxNode::Config, this,
 			    std::placeholders::_1,
 			    std::placeholders::_2));
+
+    this->rm_srv_ =
+      nh.advertiseService<o3d3xx::Rm::Request, o3d3xx::Rm::Response>
+      ("/Rm", std::bind(&O3D3xxNode::Rm, this,
+			std::placeholders::_1,
+			std::placeholders::_2));
   }
 
   /**
@@ -116,6 +122,7 @@ public:
     cv::Mat confidence_img;
     cv::Mat depth_img;
     cv::Mat depth_viz_img;
+    cv::Mat hist_img;
     double min, max;
 
     while (ros::ok())
@@ -178,6 +185,16 @@ public:
 				 "mono8", good_bad_map).toImageMsg();
 	    good_bad->header.frame_id = this->frame_id_;
 	    this->good_bad_pub_.publish(good_bad);
+
+	    // histogram of amplitude image
+	    hist_img = o3d3xx::hist1(buff->AmplitudeImage());
+	    cv::minMaxIdx(hist_img, &min, &max);
+	    cv::convertScaleAbs(hist_img, hist_img, 255 / max);
+	    sensor_msgs::ImagePtr hist =
+	      cv_bridge::CvImage(std_msgs::Header(),
+				 "bgr8", hist_img).toImageMsg();
+	    hist->header.frame_id = this->frame_id_;
+	    this->hist_pub_.publish(hist);
 	  }
       }
   }
@@ -265,6 +282,55 @@ public:
     return true;
   }
 
+  /**
+   * Implements the `Rm' service.
+   *
+   * The `Rm' service is used to remove an application from the camera. This
+   * service restricts removing the current active application.
+   */
+  bool Rm(o3d3xx::Rm::Request &req,
+	  o3d3xx::Rm::Response &res)
+  {
+    std::lock_guard<std::mutex> lock(this->fg_mutex_);
+    res.status = 0;
+    res.msg = "OK";
+
+    try
+      {
+	if (req.index > 0)
+	  {
+	    this->cam_->RequestSession();
+	    this->cam_->SetOperatingMode(o3d3xx::Camera::operating_mode::EDIT);
+	    o3d3xx::DeviceConfig::Ptr dev = this->cam_->GetDeviceConfig();
+
+	    if (dev->ActiveApplication() != req.index)
+	      {
+		this->cam_->DeleteApplication(req.index);
+	      }
+	    else
+	      {
+		res.status = -1;
+		res.msg = std::string("Cannot delete active application!");
+	      }
+	  }
+      }
+    catch (const o3d3xx::error_t& ex)
+      {
+	res.status = ex.code();
+	res.msg = ex.what();
+      }
+    catch (const std::exception& std_ex)
+      {
+	res.status = -1;
+	res.msg = std_ex.what();
+      }
+
+    this->cam_->CancelSession(); // <-- OK to do this here
+    this->fg_.reset(new o3d3xx::FrameGrabber(this->cam_));
+    return true;
+  }
+
+
 private:
   int timeout_millis_;
   bool publish_viz_images_;
@@ -280,10 +346,12 @@ private:
   image_transport::Publisher amplitude_pub_;
   image_transport::Publisher conf_pub_;
   image_transport::Publisher good_bad_pub_;
+  image_transport::Publisher hist_pub_;
 
   ros::ServiceServer version_srv_;
   ros::ServiceServer dump_srv_;
   ros::ServiceServer config_srv_;
+  ros::ServiceServer rm_srv_;
 
 }; // end: class O3D3xxNode
 

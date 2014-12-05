@@ -1,0 +1,16 @@
+{
+    "o3d3xx":
+    {
+        "Apps":
+        [
+            {
+                "Name": "High",
+                "Description": "High Dynamic Range Imager",
+                "Imager":
+                {
+                    "Type": "under5m_high"
+                }
+            }
+        ]
+    }
+}

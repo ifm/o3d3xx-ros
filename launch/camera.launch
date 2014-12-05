@@ -28,11 +28,13 @@
     <remap from="/amplitude" to="/$(arg ns)/$(arg nn)/amplitude"/>
     <remap from="/confidence" to="/$(arg ns)/$(arg nn)/confidence"/>
     <remap from="/good_bad_pixels" to="/$(arg ns)/$(arg nn)/good_bad_pixels"/>
+    <remap from="/hist" to="/$(arg ns)/$(arg nn)/hist"/>
 
     <!-- advertised services -->
     <remap from="/GetVersion" to="/$(arg ns)/$(arg nn)/GetVersion"/>
     <remap from="/Dump" to="/$(arg ns)/$(arg nn)/Dump"/>
     <remap from="/Config" to="/$(arg ns)/$(arg nn)/Config"/>
+    <remap from="/Rm" to="/$(arg ns)/$(arg nn)/Rm"/>
 
   </node>
 

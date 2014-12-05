@@ -28,6 +28,7 @@ add_service_files(
   GetVersion.srv
   Dump.srv
   Config.srv
+  Rm.srv
   )
 
 generate_messages(
