@@ -166,6 +166,131 @@ At this point, you should see an rviz window that looks something like:
 
 Congratulations! You can now utilize o3d3xx-ros.
 
+Nodes
+-----
+
+### /o3d3xx/camera
+
+This node provides a real-time feed to the camera data. This node is started
+from the primary `camera.launch` file:
+
+	$ roslaunch o3d3xx camera.launch
+
+The naming of the camera can be customized via the `ns` (namespace) and `nn`
+(node name) command line arguments passed to the `camera.launch` file. For
+example, if you specify your roslaunch command as:
+
+	$ roslaunch o3d3xx camera.launch ns:=robot nn:=front_camera
+
+The node will have the name `/robot/front_camera` in the ROS computation
+graph.
+
+#### Published Topics
+<table>
+         <tr>
+			 <th>Topic</th>
+			 <th>Message</th>
+			 <th>Description</th>
+		 </tr>
+
+	     <tr>
+			 <td>/o3d3xx/camera/amplitude</td>
+			 <td>sensor_msgs/Image</td>
+			 <td>16-bit gray scale encoding of the sensor Amplitude image </td>
+		 </tr>
+	     <tr>
+			 <td>/o3d3xx/camera/cloud</td>
+			 <td>sensor_msgs/PointCloud2</td>
+			 <td>
+			 A 3D PCL point cloud of point type `XYZI`. In this encoding the
+			 intensity channel is represented by the corresponding pixel's
+			 amplitude data. The units of this point cloud are in meters.
+			 </td>
+		 </tr>
+	     <tr>
+			 <td>/o3d3xx/camera/confidence</td>
+			 <td>sensor_msgs/Image</td>
+			 <td>
+			 An 8-bit mono image encoding of the confidence image. The meaning
+			 of each bit of each pixel value is discussed in the official IFM
+			 documentation for the camera.
+			 </td>
+		 </tr>
+	     <tr>
+			 <td>/o3d3xx/camera/depth</td>
+			 <td>sensor_msgs/Image</td>
+			 <td>
+			 A 16-bit mono image encoding of the radial depth map from the
+			 camera. The depth units are in millimeters.
+			 </td>
+		 </tr>
+	     <tr>
+			 <td>/o3d3xx/camera/depth_viz</td>
+			 <td>sensor_msgs/Image</td>
+			 <td>
+			 A rendering of the depth image utilizing a colormap more
+			 human-friendly for visualization purposes. For performance
+			 reasons, messages are only published to this topic when the
+			 `publish_viz_images` parameter is set to true at launch time.
+			 </td>
+		 </tr>
+	     <tr>
+			 <td>/o3d3xx/camera/good_bad_pixels</td>
+			 <td>sensor_msgs/Image</td>
+			 <td>
+			 A binary image showing good vs. bad pixels on the pixel array. Bad
+			 pixels can be caused by numerous reasons (e.g., motion blur over
+			 an integration/exposure timestep). Visualizing this data is useful
+			 for when you are tuning your imager parameters. For performance
+			 reasons, messages are only published to this topic when the
+			 `publish_viz_images` parameter is set to true at launch time.
+			 </td>
+		 </tr>
+	     <tr>
+			 <td>/o3d3xx/camera/hist</td>
+			 <td>sensor_msgs/Image</td>
+			 <td>
+			 An image showing gray level distribution of the pixels in the
+			 amplitude image. This is a simple way to visualize the dynamic
+			 range of the current imager settings. For performance
+			 reasons, messages are only published to this topic when the
+			 `publish_viz_images` parameter is set to true at launch time.
+			 </td>
+		 </tr>
+</table>
+
+#### Advertised Services
+
+#### Parameters
+
+
+### /o3d3xx/camera_tf
+
+This node is of type `tf/static_transform_publisher`. It establishes a frame_id
+for the camera in the global tf tree. This node is launched from the primary
+`camera.launch` file:
+
+	$ roslaunch o3d3xx camera.launch
+
+When run as above, the tf publishing node would be named `/o3d3xx/camera_tf`
+and the camera coordinate frame would be `/o3d3xx/camera_link` in the tf tree.
+
+You can customize this naming (to an extent) via the `ns` (namespace) and `nn`
+(node name) command line arguments passed to the `camera.launch` file. For
+example, if you specify your roslaunch command as:
+
+	$ roslaunch o3d3xx camera.launch ns:=robot nn:=front_camera
+
+The node name will be `/robot/front_camera_tf` and the camera frame will
+be `/robot/front_camera_link` in the tf tree.
+
+### /o3d3xx/camera/config_node
+
+### /rviz
+
+Configuring Camera Settings
+---------------------------
+
 TODO
 ----
 
