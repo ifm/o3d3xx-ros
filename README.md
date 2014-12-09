@@ -475,12 +475,12 @@ application, you can use a JSON snippet like this:
 The above snippet is provided as an example [here](json/ex_set_active.json). To
 apply this to your camera, you can:
 
-	$ roslaunch o3d3xx config infile:=/path/to/ex_set_active.json
+	$ roslaunch o3d3xx config.launch infile:=/path/to/ex_set_active.json
 
 It was also noted above that the `/o3d3xx/camera/config_node` will read `stdin`
 by default, so you could also:
 
-	$ echo '{"o3d3xx":{"Device":{"ActiveApplication":"2"}}}' | roslaunch o3d3xx config
+	$ echo '{"o3d3xx":{"Device":{"ActiveApplication":"2"}}}' | roslaunch o3d3xx config.launch
 
 [Here](json/ex_add_app.json) is another example JSON file. This one will add a
 new application to the camera, using the default values for the high-dynamic
