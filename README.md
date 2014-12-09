@@ -489,6 +489,25 @@ range imager. We note that this application is _added_ to the camera because no
 application at the specified `Index`, if present, would be edited to reflect
 this configuration.
 
+In general, a simple way to configure camera settings without having to
+memorize the JSON syntax would be to simply dump the current camera settings to
+a file:
+
+	$ rosservice call /o3d3xx/camera/Dump > /tmp/camera.json
+
+Then, open `/tmp/camera.json` with a text editor to create a declarative JSON
+configuration for your camera. You should be sure to delete the variable names
+from the `rosservice` output if you are following this example
+_word-for-word_. Additionally, you can delete any unnecessary keys if you would
+like, however it is not strictly necessary as the `/o3d3xx/camera/Config`
+service will leave unedited values unchanged on the camera. Once you have a
+configuration that you like, you can:
+
+	$ roslaunch o3d3xx config.launch infile:=/tmp/camera.json
+
+You can check that your configuration is active by calling the
+`/o3d3xx/camera/Dump` service again.
+
 TODO
 ----
 
