@@ -261,6 +261,51 @@ graph.
 
 #### Advertised Services
 
+<table>
+	<tr>
+		<th>Service Name</th>
+		<th>Service Definition</th>
+		<th>Description</th>
+	</tr>
+	<tr>
+		<td>/o3d3xx/camera/Config</td>
+		<td><a href="srv/Config.srv">Config.srv</a></td>
+		<td>
+		Mutates camera settings based upon an input JSON file. <b>NOTE:</b> Due
+        to what appears to be limitations in the YAML parsing of the stock ROS
+	    `rosservice` command line tool (i.e., it does not handle JSON as string
+	    payload well) you will have to use the
+	    <i>/o3d3xx/camera/config_node</i> to configure the camera. This is
+	    explained in further detail below.
+		</td>
+	</tr>
+	<tr>
+		<td>/o3d3xx/camera/Dump</td>
+		<td><a href="srv/Dump.srv">Dump.srv</a></td>
+		<td>
+		Dumps the current configuration of the camera to a JSON string. The
+	    output of this dump is suitable for editing and passing to the `Config`
+	    service for configuring the camera.
+		</td>
+	</tr>
+	<tr>
+		<td>/o3d3xx/camera/GetVersion</td>
+		<td><a href="srv/GetVersion.srv">GetVersion.srv</a></td>
+		<td>
+		Returns the current version of the underlying
+		<a href="https://github.com/lovepark/libo3d3xx">libo3d3xx</a> library
+	    that this ROS node is linked to.
+	    </td>
+	</tr>
+	<tr>
+		<td>/o3d3xx/camera/Rm</td>
+		<td><a href="srv/Rm.srv">Rm.srv</a></td>
+		<td>Removes an application from the camera. This service will restrict
+	    moving the current active application.
+	    </td>
+	</tr>
+</table>
+
 #### Parameters
 
 
