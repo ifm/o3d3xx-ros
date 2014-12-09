@@ -370,10 +370,124 @@ be `/robot/front_camera_link` in the tf tree.
 
 ### /o3d3xx/camera/config_node
 
+This node is used as a proxy to simplify calling the `/o3d3xx/camera/Config`
+service offered by the `/o3d3xx/camera` node. It was noted above that there
+appears to be a limitation in the YAML parser of the ROS `rosservice` command
+line tool. Specifically, it seems that it is not capable of assigning a JSON
+string to a variable. This is the reason for this node. This is not a
+long-running node but rather works like a typical command-line tool would: you
+invoke it, it runs, and exits. The following command line will launch this
+node:
+
+	$ roslaunch o3d3xx config.launch
+
+#### Parameters
+
+<table>
+	<tr><th>Name</th><th>Data Type</th><th>Description</th></tr>
+	<tr>
+		<td>infile</td>
+		<td>string</td>
+		<td>
+		By default, this node will read `stdin` for a JSON string to use to
+	    pass to the `/o3d3xx/camera/Config` service. However, if this parameter
+	    is specified it will read the JSON from this file.
+		</td>
+	</tr>
+</table>
+
+
 ### /rviz
+
+This package offers a launch script that wraps the execution of `rviz` so that
+the display will be conveniently configured for visualizing the
+`/o3d3xx/camera` data. To launch this node:
+
+	$ optirun roslaunch o3d3xx rviz.launch
+
+__NOTE__: You will likely not need to specify the `optirun` piece of the above
+command. We utilize that to manage an Optimus-based NVIDIA GPU via the linux
+`bumblebee` package.
+
+The rviz window should look something like:
+
+![rviz1](doc/figures/rviz1.png)
+
 
 Configuring Camera Settings
 ---------------------------
+
+Configuring the camera is accomplished by passing a JSON string to the
+`/o3d3xx/camera/config_node` which will call the `/o3d3xx/camera/Config`
+service to mutate the camera settings. Using a JSON string to configure the
+camera has the following primary benefits:
+
+0. Configuration is declarative. The camera configuration will reflect that
+   which is described by the JSON file.
+1. The JSON data is human-consumable and easily edited in a text editor. This
+   makes it very convenient for headless embedded systems.
+2. The JSON data is machine parsable, so configuring the camera on the fly via
+   programmable logic is also possible.
+
+There are also a few downfalls to using JSON. Most notably the lack of comments
+and an enforceable schema. One could argue that the latter keeps things
+flexible. None-the-less, JSON is the format used by `libo3d3xx` and, by
+extension, this ROS package.
+
+An exemplary JSON file is shown [here](json/ex_camera.json) (this is the result
+of calling the `/o3d3xx/camera/Dump` service on a development system). When
+passing a JSON string (like the previously linked to file) to the
+`/o3d3xx/camera/Config` service (or to the `/o3d3xx/camera/config_node`) the
+following rules are used to configure the camera:
+
+0. The `Device` section is processed and saved on the camera.
+1. The `Apps` section is processed. For each app:
+  0. If the `Index` key is present, a current app at that `Index` is looked
+     up. If present, it is edited to reflect the data in the JSON file. If an
+     app at that `Index` is not present, a new app is created with the
+     parameters from the JSON file. It is not guaranteed that the new app will
+     have the specified `Index`.
+  1. If the `Index` key is not present, a new app is created with the
+     parameters as specified in the JSON file.
+2. The active application is set by consulting the desired index of the
+   `ActiveApplication` from the `Device` section of the JSON. If the specified
+   `Index` does not exist, the active application is not set.
+3. The `Net` section is processed. A reboot of the camera may be necessary
+   after changing the camera's network parameters. Additionally, you will
+   likely need to restart the `/o3d3xx/camera` node pointing it to the new IP
+   address (if that is what you changed).
+
+It should also be noted that any portion of the JSON tree can be specfied to
+configure only that part of the camera. The only rule to follow is that all
+keys should be fully qualified. For example, to simply set the active
+application, you can use a JSON snippet like this:
+
+	{
+		"o3d3xx":
+		{
+			"Device":
+			{
+				"ActiveApplication": "2"
+			}
+		}
+	}
+
+The above snippet is provided as an example [here](json/ex_set_active.json). To
+apply this to your camera, you can:
+
+	$ roslaunch o3d3xx config infile:=/path/to/ex_set_active.json
+
+It was also noted above that the `/o3d3xx/camera/config_node` will read `stdin`
+by default, so you could also:
+
+	$ echo '{"o3d3xx":{"Device":{"ActiveApplication":"2"}}}' | roslaunch o3d3xx config
+
+[Here](json/ex_add_app.json) is another example JSON file. This one will add a
+new application to the camera, using the default values for the high-dynamic
+range imager. We note that this application is _added_ to the camera because no
+`Index` is specified for the application. If an `Index` were specfied, the
+application at the specified `Index`, if present, would be edited to reflect
+this configuration.
 
 TODO
 ----
