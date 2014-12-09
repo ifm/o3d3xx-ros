@@ -301,12 +301,51 @@ graph.
 		<td>/o3d3xx/camera/Rm</td>
 		<td><a href="srv/Rm.srv">Rm.srv</a></td>
 		<td>Removes an application from the camera. This service will restrict
-	    moving the current active application.
+	    removing the current active application.
 	    </td>
 	</tr>
 </table>
 
 #### Parameters
+
+<table>
+	<tr><th>Name</th><th>Data Type</th><th>Description</th></tr>
+	<tr>
+		<td>ip</td>
+		<td>string</td>
+		<td>IP address of the camera</td>
+	</tr>
+	<tr>
+		<td>xmlrpc_port</td>
+		<td>int</td>
+		<td>TCP port the camera's XMLRPC server is listening on</td>
+	</tr>
+	<tr>
+		<td>password</td>
+		<td>string</td>
+		<td>Password to use to connect to the camera</td>
+	</tr>
+	<tr>
+		<td>timeout_millis</td>
+		<td>int</td>
+		<td>Time, in milliseconds, to block when waiting for a frame from the
+	    camera before timing out.</td>
+	</tr>
+	<tr>
+		<td>publish_viz_images</td>
+		<td>bool</td>
+		<td>
+	    In general, for a runtime system, the core data a system will want from
+	    this camera include the `cloud`, `depth`, `amplitude`, and `confidence`
+	    images. This node will always publish those data. However, if you set
+	    this parameter to `true` a few additional images are published. These
+	    are `depth_viz`, `good_bad_pixels`, and `hist` (they are described
+	    above in the `Topics` section). These <i>viz images</i> are intended
+	    for human analysis and visualization in `rviz`.
+		</td>
+	</tr>
+
+</table>
 
 
 ### /o3d3xx/camera_tf
