@@ -137,13 +137,15 @@ looks basically like:
 	lrwxrwxrwx 1 tpanzarella tpanzarella 49 Dec  2 15:26 CMakeLists.txt -> /opt/ros/indigo/share/catkin/cmake/toplevel.cmake
 	lrwxrwxrwx 1 tpanzarella tpanzarella 32 Dec  2 15:24 o3d3xx -> /home/tpanzarella/dev/o3d3xx-ros
 
-Now we are ready to build the code (old version):
+Now we are ready to build the code.
+
+Old version:
 
 	$ cd ~/dev/o3d3xx-catkin
 	$ catkin_make -DCMAKE_INSTALL_PREFIX=${LPR_ROS}/o3d3xx
 	$ catkin_make install
 
-Now we are ready to build the code (new version -- as of 4/24/15):
+New version -- as of 4/24/15:
 
 	$ cd ~/dev/o3d3xx-catkin
 	$ catkin_make
