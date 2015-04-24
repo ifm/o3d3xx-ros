@@ -2,7 +2,7 @@
 <package>
 
   <name>o3d3xx</name>
-  <version>0.1.0</version>
+  <version>0.1.1</version>
   <description>O3D3xx ToF Camera ROS package</description>
   <maintainer email="tom@loveparkrobotics.com">Tom Panzarella</maintainer>
   <license>Apache 2</license>

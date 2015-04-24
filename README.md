@@ -19,6 +19,11 @@ Software Compatibility Matrix
 			 <td>0.1.0</td>
 			 <td>Indigo</td>
 		 </tr>
+		 <tr>
+			 <td>0.1.5</td>
+			 <td>0.1.0</td>
+			 <td>Indigo</td>
+		 </tr>
 </table>
 
 Prerequisites
@@ -132,11 +137,17 @@ looks basically like:
 	lrwxrwxrwx 1 tpanzarella tpanzarella 49 Dec  2 15:26 CMakeLists.txt -> /opt/ros/indigo/share/catkin/cmake/toplevel.cmake
 	lrwxrwxrwx 1 tpanzarella tpanzarella 32 Dec  2 15:24 o3d3xx -> /home/tpanzarella/dev/o3d3xx-ros
 
-Now we are ready to build the code:
+Now we are ready to build the code (old version):
 
 	$ cd ~/dev/o3d3xx-catkin
 	$ catkin_make -DCMAKE_INSTALL_PREFIX=${LPR_ROS}/o3d3xx
 	$ catkin_make install
+
+Now we are ready to build the code (new version -- as of 4/24/15):
+
+	$ cd ~/dev/o3d3xx-catkin
+	$ catkin_make
+	$ catkin_make -DCMAKE_INSTALL_PREFIX=${LPR_ROS}/o3d3xx install
 
 The ROS package should now be installed in `~/ros/o3d3xx`. To test everything
 out you should open a fresh bash shell, and start up a ROS core:
