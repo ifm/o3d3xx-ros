@@ -21,7 +21,7 @@ Software Compatibility Matrix
 		 </tr>
 		 <tr>
 			 <td>0.1.5</td>
-			 <td>0.1.0</td>
+			 <td>0.1.1</td>
 			 <td>Indigo</td>
 		 </tr>
 </table>
