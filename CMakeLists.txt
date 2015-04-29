@@ -6,7 +6,7 @@ set(CMAKE_MODULE_PATH
   ${CMAKE_MODULE_PATH}
   )
 find_package(libo3d3xx REQUIRED)
-
+find_package(Boost REQUIRED COMPONENTS filesystem)
 find_package(catkin REQUIRED COMPONENTS
              image_transport
              pcl_ros
@@ -62,6 +62,12 @@ target_link_libraries(o3d3xx_config_node
   ${catkin_LIBRARIES}
   )
 
+add_executable(o3d3xx_file_writer_node src/o3d3xx_file_writer_node.cpp)
+target_link_libraries(o3d3xx_file_writer_node
+  ${catkin_LIBRARIES}
+  ${Boost_FILESYSTEM_LIBRARY}
+  )
+
 #############
 ## Install ##
 #############
@@ -81,6 +87,7 @@ install(FILES
 install(TARGETS
   o3d3xx_node
   o3d3xx_config_node
+  o3d3xx_file_writer_node
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}

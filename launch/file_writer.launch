@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- Command-line arguments -->
+  <arg name="ns" default="o3d3xx"/>
+  <arg name="nn" default="camera"/>
+  <arg name="outdir" default="/tmp/o3d3xx-ros/data"/>
+  <arg name="dump_yaml" default="false"/>
+
+  <node pkg="o3d3xx"
+	type="o3d3xx_file_writer_node"
+	ns="$(arg ns)/$(arg nn)"
+	name="file_writer"
+	output="screen">
+
+    <param name="outdir" value="$(arg outdir)"/>
+    <param name="dump_yaml" value="$(arg dump_yaml)"/>
+
+    <!-- subscribed topics -->
+    <remap from="/cloud" to="/$(arg ns)/$(arg nn)/cloud"/>
+    <remap from="/depth" to="/$(arg ns)/$(arg nn)/depth"/>
+    <remap from="/amplitude" to="/$(arg ns)/$(arg nn)/amplitude"/>
+    <remap from="/confidence" to="/$(arg ns)/$(arg nn)/confidence"/>
+
+  </node>
+
+</launch>
