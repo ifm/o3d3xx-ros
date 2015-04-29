@@ -24,6 +24,11 @@ Software Compatibility Matrix
 			 <td>0.1.1</td>
 			 <td>Indigo</td>
 		 </tr>
+		 <tr>
+			 <td>0.1.5</td>
+			 <td>0.1.2</td>
+			 <td>Indigo</td>
+		 </tr>
 </table>
 
 Prerequisites
@@ -425,6 +430,107 @@ command. We utilize that to manage an Optimus-based NVIDIA GPU via the linux
 The rviz window should look something like:
 
 ![rviz1](doc/figures/rviz1.png)
+
+### /o3d3xx/camera/file_writer
+
+This node provides a way to subscribe to the various point cloud and image
+topics provided by the `/o3d3xx/camera` node and write the data to
+files. Specifically,
+[PCD files](http://pointclouds.org/documentation/tutorials/pcd_file_format.php)
+for the `/o3d3xx/camera/cloud` topic and PNG files for the
+`/o3d3xx/camera/depth`, `/o3d3xx/camera/amplitude`, and
+`/o3d3xx/camera/confidence` topics. This node was created to ease
+tool interoperability of performing analysis on the data provided by the O3D3xx
+camera. For example, at [Love Park Robotics](http://loveparkrobotics.com), our
+lead quant likes to use MATLAB for algorithm design and using this node to
+record data from the camera allows us to perform quick data collection tasks
+from an O3D3xx camera stream and puts us in position to immediately ingest that
+data into MATLAB without having to fuss with
+[bag files](http://wiki.ros.org/Bags) or any other data-interchange
+issues. This node is started from the `file_writer.launch` file:
+
+	$ roslaunch o3d3xx file_writer.launch
+
+The naming of the node can be customized via the `ns` (namespace) and `nn`
+(node name) command line arguments.
+
+By default, this node will write its output to `/tmp/o3d3xx-ros/data` but that
+can be customized with the `outdir` parameter passed on the command line to
+`file_writer.launch`.
+
+[Here](doc/matlab_tutorial.md) is a brief writeup on how you can use this node
+to feed data to MATLAB for off-line analysis.
+
+#### Subscribed Topics
+<table>
+         <tr>
+			 <th>Topic</th>
+			 <th>Message</th>
+			 <th>Description</th>
+		 </tr>
+
+	     <tr>
+			 <td>/o3d3xx/camera/amplitude</td>
+			 <td>sensor_msgs/Image</td>
+			 <td>
+			 Data received on this topic is written to
+			 `/tmp/o3d3xx-ros/data/amplitude/amplitude_XXX.png` where `XXX` is
+			 a monotonically increasing integer value.
+			 </td>
+		 </tr>
+	     <tr>
+			 <td>/o3d3xx/camera/cloud</td>
+			 <td>sensor_msgs/PointCloud2</td>
+			 <td>
+	         Data received on this topic is written to
+			 `/tmp/o3d3xx-ros/data/cloud/cloud_XXX.pcd` where `XXX` is a
+			 monotonically increasing integer value.
+			 </td>
+		 </tr>
+	     <tr>
+			 <td>/o3d3xx/camera/confidence</td>
+			 <td>sensor_msgs/Image</td>
+			 <td>
+			 Data received on this topic is written to
+			 `/tmp/o3d3xx-ros/data/confidence/confidence_XXX.png` where `XXX` is
+			 a monotonically increasing integer value.
+			 </td>
+		 </tr>
+	     <tr>
+			 <td>/o3d3xx/camera/depth</td>
+			 <td>sensor_msgs/Image</td>
+			 <td>
+			 Data received on this topic is written to
+			 `/tmp/o3d3xx-ros/data/depth/depth_XXX.png` where `XXX` is
+			 a monotonically increasing integer value.
+			 </td>
+		 </tr>
+</table>
+
+#### Parameters
+
+<table>
+	<tr><th>Name</th><th>Data Type</th><th>Description</th></tr>
+	<tr>
+		<td>outdir</td>
+		<td>string</td>
+		<td>Root-level output directory</td>
+	</tr>
+	<tr>
+		<td>dump_yaml</td>
+		<td>bool</td>
+		<td>
+	    If this is set to `true`, in addition to writing the PNG output for the
+		2D images, OpenCV YAML `FileStorage` is written as well. This is has
+	    been provided for two reasons. First, it allows for quick
+	    human-readable inspection of the data (i.e., you can use `Emacs` or
+	    even `less` to spot check some pixel values.) Second, due to its human
+	    readability, you can compare against whatever tool you are using to
+	    ingest the PNG data to ensure the decompression is in fact lossless (it
+	    should be or your PNG library is broken).
+		</td>
+	</tr>
+</table>
 
 
 Configuring Camera Settings
