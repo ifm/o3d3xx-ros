@@ -414,23 +414,6 @@ node:
 	</tr>
 </table>
 
-
-### /rviz
-
-This package offers a launch script that wraps the execution of `rviz` so that
-the display will be conveniently configured for visualizing the
-`/o3d3xx/camera` data. To launch this node:
-
-	$ optirun roslaunch o3d3xx rviz.launch
-
-__NOTE__: You will likely not need to specify the `optirun` piece of the above
-command. We utilize that to manage an Optimus-based NVIDIA GPU via the linux
-`bumblebee` package.
-
-The rviz window should look something like:
-
-![rviz1](doc/figures/rviz1.png)
-
 ### /o3d3xx/camera/file_writer
 
 This node provides a way to subscribe to the various point cloud and image
@@ -530,7 +513,62 @@ to feed data to MATLAB for off-line analysis.
 	    should be or your PNG library is broken).
 		</td>
 	</tr>
+	<tr>
+		<td>topic_suffix</td>
+		<td>string</td>
+		<td>
+		By default this is the empty string, and usually, this is what you
+	    want. However setting this can make it convenient to have the node
+	    subscribe to throttled topics (for example). So, in that case you can
+	    set this to`_throttle` on your `roslaunch` command line and (assuming
+	    you are running the throttled nodes), this node will now subscribe to
+	    the throttled topics instead of the full-speed topics.
+		</td>
+	</tr>
 </table>
+
+### /rviz
+
+This package offers a launch script that wraps the execution of `rviz` so that
+the display will be conveniently configured for visualizing the
+`/o3d3xx/camera` data. To launch this node:
+
+	$ optirun roslaunch o3d3xx rviz.launch
+
+__NOTE__: You will likely not need to specify the `optirun` piece of the above
+command. We utilize that to manage an Optimus-based NVIDIA GPU via the linux
+`bumblebee` package.
+
+The rviz window should look something like:
+
+![rviz1](doc/figures/rviz1.png)
+
+### /o3d3xx/camera/XXX_throttler
+
+This package offers a launch script that wraps the `topic_tools/throttler` node
+so that it can throttle the core topics from the camera. Specifically, it will
+throttle `/o3d3xx/camera/cloud` to `/o3d3xx/camera/cloud_throttle`,
+`/o3d3xx/camera/amplitude` to `/o3d3xx/camera/amplitude_throttle`,
+`/o3d3xx/camera/depth` to `/o3d3xx/camera/depth_throttle`,
+`/o3d3xx/camera/confidence` to `/o3d3xx/camera/confidence_throttle`. To launch
+this node:
+
+	$ roslaunch o3d3xx throttled.launch
+
+By default, it will throttle the above named topics to 1 Hz. You can change the
+frequency with the `hz` command line argument. For example, to send data at 2
+Hz:
+
+	$ roslaunch o3d3xx throttled.launch hz:=2.0
+
+Using this launch file to launch this set of nodes is strictly optional. We
+have found use for it in two ways. First, to slow down the publishing frequency
+of the topics when used in conjunction with the `/o3d3xx/camera/file_writer`
+node for collecting data (i.e., in those instances when we really do not need
+all the data but rather some subsampling of it). Second, if we are running the
+camera on a drone (for example) that has a slower radio link down to a ground
+control station running `rviz` where we want to see what the camera sees while
+the drone is in flight. Clearly there are other uses for this, YMMV.
 
 
 Configuring Camera Settings

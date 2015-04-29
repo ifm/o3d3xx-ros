@@ -5,6 +5,7 @@
   <arg name="nn" default="camera"/>
   <arg name="outdir" default="/tmp/o3d3xx-ros/data"/>
   <arg name="dump_yaml" default="false"/>
+  <arg name="topic_suffix" default=""/>
 
   <node pkg="o3d3xx"
 	type="o3d3xx_file_writer_node"
@@ -16,10 +17,17 @@
     <param name="dump_yaml" value="$(arg dump_yaml)"/>
 
     <!-- subscribed topics -->
-    <remap from="/cloud" to="/$(arg ns)/$(arg nn)/cloud"/>
-    <remap from="/depth" to="/$(arg ns)/$(arg nn)/depth"/>
-    <remap from="/amplitude" to="/$(arg ns)/$(arg nn)/amplitude"/>
-    <remap from="/confidence" to="/$(arg ns)/$(arg nn)/confidence"/>
+    <remap from="/cloud"
+	   to="/$(arg ns)/$(arg nn)/cloud$(arg topic_suffix)"/>
+
+    <remap from="/depth"
+	   to="/$(arg ns)/$(arg nn)/depth$(arg topic_suffix)"/>
+
+    <remap from="/amplitude"
+	   to="/$(arg ns)/$(arg nn)/amplitude$(arg topic_suffix)"/>
+
+    <remap from="/confidence"
+	   to="/$(arg ns)/$(arg nn)/confidence$(arg topic_suffix)"/>
 
   </node>
 

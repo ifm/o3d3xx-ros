@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- Command line arguments -->
+  <arg name="ns" default="o3d3xx"/>
+  <arg name="nn" default="camera"/>
+  <arg name="hz" default="1.0"/>
+
+  <node pkg="topic_tools"
+	type="throttle"
+	ns="$(arg ns)/$(arg nn)"
+	name="cloud_throttler"
+	args="messages /$(arg ns)/$(arg nn)/cloud $(arg hz)"/>
+
+  <node pkg="topic_tools"
+	type="throttle"
+	ns="$(arg ns)/$(arg nn)"
+	name="depth_throttler"
+	args="messages /$(arg ns)/$(arg nn)/depth $(arg hz)"/>
+
+  <node pkg="topic_tools"
+	type="throttle"
+	ns="$(arg ns)/$(arg nn)"
+	name="amplitude_throttler"
+	args="messages /$(arg ns)/$(arg nn)/amplitude $(arg hz)"/>
+
+  <node pkg="topic_tools"
+	type="throttle"
+	ns="$(arg ns)/$(arg nn)"
+	name="confidence_throttler"
+	args="messages /$(arg ns)/$(arg nn)/confidence $(arg hz)"/>
+
+</launch>
