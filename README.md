@@ -545,7 +545,8 @@ The rviz window should look something like:
 
 ### /o3d3xx/camera/XXX_throttler
 
-This package offers a launch script that wraps the `topic_tools/throttler` node
+This package offers a launch script that wraps the
+[topic_tools/throttler](http://wiki.ros.org/topic_tools/throttle) node
 so that it can throttle the core topics from the camera. Specifically, it will
 throttle `/o3d3xx/camera/cloud` to `/o3d3xx/camera/cloud_throttle`,
 `/o3d3xx/camera/amplitude` to `/o3d3xx/camera/amplitude_throttle`,

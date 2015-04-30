@@ -37,7 +37,7 @@ should look like this:
 ![rosgraph_fullspeed](figures/rosgraph_fullspeed.png)
 
 In some cases, you may actually want to capture the data at a lower frequency
-that full framerate of the camera. If this is the case, you can leverage the
+than full framerate of the camera. If this is the case, you can leverage the
 throttled nodes. The steps to do that are (assume each command below occurs in
 a separate terminal):
 
@@ -129,10 +129,10 @@ OK. Let's pause here a second. First, disregard the warning you see in the
 above output as it seems to indicate that `matpcl` is not up-to-date with the
 current PCD file format. We don't care about the `VIEWPOINT` right now
 anyway. Second, we now see that we have a MATLAB matrix with dimensions
-132x176x4. So, for each pixel on the 132x176 array we have the cartesian x, y,
-z values and the intensity (amplitude) data in this data structure. Here is how
-we can view the point cloud in a MATLAB plot where each pixel is colored with
-the intensity value:
+132x176x4. So, for each pixel on the 132x176 imager array we have the cartesian
+x, y, z values and the intensity (amplitude) data in this data structure. Here
+is how we can view the point cloud in a MATLAB plot where each pixel is colored
+with the intensity value:
 
 	>> X = cloud(:,:,1);
 	>> Y = cloud(:,:,2);
