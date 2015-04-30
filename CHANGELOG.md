@@ -2,6 +2,5 @@
 Changelog for package o3d3xx-ros
 ================================
 
-0.1.0 (2014-12-05)
-------------------
-* Initial release
+THIS FILE HAS BEEN DEPRECATED. PLEASE REFER TO THE
+[COMMIT LOG](https://github.com/lovepark/o3d3xx-ros/commits/master).
