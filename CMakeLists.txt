@@ -56,11 +56,13 @@ target_link_libraries(o3d3xx_node
   ${catkin_LIBRARIES}
   ${libo3d3xx_LIBRARIES}
   )
+add_dependencies(o3d3xx_node ${PROJECT_NAME}_generate_messages_cpp)
 
 add_executable(o3d3xx_config_node src/o3d3xx_config_node.cpp)
 target_link_libraries(o3d3xx_config_node
   ${catkin_LIBRARIES}
   )
+add_dependencies(o3d3xx_config_node ${PROJECT_NAME}_generate_messages_cpp)
 
 add_executable(o3d3xx_file_writer_node src/o3d3xx_file_writer_node.cpp)
 target_link_libraries(o3d3xx_file_writer_node
