@@ -1,9 +1,20 @@
 <?xml version="1.0"?>
 <launch>
 
-  <node pkg="rviz"
-	type="rviz"
-	name="rviz"
-	args="-d $(find o3d3xx)/launch/o3d3xx.rviz"/>
+  <arg name="range" default="false"/>
+
+  <group unless="$(arg range)">
+    <node pkg="rviz"
+	  type="rviz"
+	  name="rviz"
+	  args="-d $(find o3d3xx)/launch/o3d3xx.rviz"/>
+  </group>
+
+  <group if="$(arg range)">
+    <node pkg="rviz"
+	  type="rviz"
+	  name="rviz"
+	  args="-d $(find o3d3xx)/launch/o3d3xx_x.rviz"/>
+  </group>
 
 </launch>

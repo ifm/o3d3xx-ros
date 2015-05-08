@@ -29,6 +29,11 @@ Software Compatibility Matrix
 			 <td>0.1.2</td>
 			 <td>Indigo</td>
 		 </tr>
+		 <tr>
+			 <td>0.1.6</td>
+			 <td>0.1.3</td>
+			 <td>Indigo</td>
+		 </tr>
 </table>
 
 Prerequisites
@@ -535,11 +540,18 @@ the display will be conveniently configured for visualizing the
 
 	$ optirun roslaunch o3d3xx rviz.launch
 
+Running the command as above will, by default, color the point cloud with the
+data from the amplitude image (i.e., the intensity). Alternatively, you can
+color the point cloude, by default, with the X-range like:
+
+	$ optirun roslaunch o3d3xx rviz.launch range:=1
+
 __NOTE__: You will likely not need to specify the `optirun` piece of the above
 command. We utilize that to manage an Optimus-based NVIDIA GPU via the linux
 `bumblebee` package.
 
-The rviz window should look something like:
+The rviz window should look something like (assuming you are coloring the point
+cloud with the intensity data):
 
 ![rviz1](doc/figures/rviz1.png)
 
