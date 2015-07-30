@@ -52,23 +52,23 @@ public:
       {"cloud", "depth", "amplitude", "confidence"};
 
     for (auto& dir : dirs)
-      {
-	std::string target_dir = this->outdir_ + "/" + dir;
+    {
+      std::string target_dir = this->outdir_ + "/" + dir;
 
-	if(! boost::filesystem::create_directories(target_dir))
-	  {
-	    if (boost::filesystem::is_directory(target_dir))
-	      {
-		throw std::runtime_error("Directory already exists: " +
-					 target_dir);
-	      }
-	    else
-	      {
-		throw std::runtime_error("Could not create directory: " +
-					 target_dir);
-	      }
-	  }
+      if (!boost::filesystem::create_directories(target_dir))
+      {
+        if (boost::filesystem::is_directory(target_dir))
+        {
+          throw std::runtime_error("Directory already exists: " +
+                                   target_dir);
+        }
+        else
+        {
+          throw std::runtime_error("Could not create directory: " +
+                                   target_dir);
+        }
       }
+    }
 
     //----------------------
     // Subscribed topics
@@ -77,25 +77,25 @@ public:
       nh.subscribe<pcl::PointCloud<o3d3xx::PointT> >
       ("/cloud", 10,
        std::bind(&O3D3xxFileWriterNode::CloudCb, this,
-		 std::placeholders::_1));
+                 std::placeholders::_1));
 
     this->depth_sub_ =
       nh.subscribe<sensor_msgs::Image>
       ("/depth", 10,
        std::bind(&O3D3xxFileWriterNode::ImageCb, this,
-		 std::placeholders::_1, "depth"));
+                 std::placeholders::_1, "depth"));
 
     this->amplitude_sub_ =
       nh.subscribe<sensor_msgs::Image>
       ("/amplitude", 10,
        std::bind(&O3D3xxFileWriterNode::ImageCb, this,
-		 std::placeholders::_1, "amplitude"));
+                 std::placeholders::_1, "amplitude"));
 
     this->confidence_sub_ =
       nh.subscribe<sensor_msgs::Image>
       ("/confidence", 10,
        std::bind(&O3D3xxFileWriterNode::ImageCb, this,
-		 std::placeholders::_1, "confidence"));
+                 std::placeholders::_1, "confidence"));
   }
 
   void Run()
@@ -117,66 +117,66 @@ public:
     std::stringstream ss;
     ss << std::setw(10) << std::setfill('0') << this_idx;
     pcl::io::savePCDFileASCII(this->outdir_ + "/cloud/cloud_"
-			      + ss.str() + ".pcd",
-			      *cloud);
+                              + ss.str() + ".pcd",
+                              *cloud);
   }
 
   /**
    * Callback on the "/depth", "/amplitude", and "/confidence" topics
    */
   void ImageCb(const sensor_msgs::Image::ConstPtr& im,
-	       const std::string& im_type)
+         const std::string& im_type)
   {
     std::string target_file = this->outdir_;
     int this_idx = 0;
     cv_bridge::CvImagePtr cv_ptr;
 
     if (im_type == "depth")
-      {
-	this->depth_idx_mutex_.lock();
-	this_idx = this->depth_idx_;
-	this->depth_idx_++;
-	this->depth_idx_mutex_.unlock();
+    {
+      this->depth_idx_mutex_.lock();
+      this_idx = this->depth_idx_;
+      this->depth_idx_++;
+      this->depth_idx_mutex_.unlock();
 
-	target_file += "/depth/depth_";
-	cv_ptr = cv_bridge::toCvCopy(im, sensor_msgs::image_encodings::MONO16);
-      }
+      target_file += "/depth/depth_";
+      cv_ptr = cv_bridge::toCvCopy(im, sensor_msgs::image_encodings::MONO16);
+    }
     else if (im_type == "amplitude")
-      {
-	this->amplitude_idx_mutex_.lock();
-	this_idx = this->amplitude_idx_;
-	this->amplitude_idx_++;
-	this->amplitude_idx_mutex_.unlock();
+    {
+      this->amplitude_idx_mutex_.lock();
+      this_idx = this->amplitude_idx_;
+      this->amplitude_idx_++;
+      this->amplitude_idx_mutex_.unlock();
 
-	target_file += "/amplitude/amplitude_";
-	cv_ptr = cv_bridge::toCvCopy(im, sensor_msgs::image_encodings::MONO16);
-      }
+      target_file += "/amplitude/amplitude_";
+      cv_ptr = cv_bridge::toCvCopy(im, sensor_msgs::image_encodings::MONO16);
+    }
     else if (im_type == "confidence")
-      {
-	this->confidence_idx_mutex_.lock();
-	this_idx = this->confidence_idx_;
-	this->confidence_idx_++;
-	this->confidence_idx_mutex_.unlock();
+    {
+      this->confidence_idx_mutex_.lock();
+      this_idx = this->confidence_idx_;
+      this->confidence_idx_++;
+      this->confidence_idx_mutex_.unlock();
 
-	target_file += "/confidence/confidence_";
-	cv_ptr = cv_bridge::toCvCopy(im, sensor_msgs::image_encodings::MONO8);
-      }
+      target_file += "/confidence/confidence_";
+      cv_ptr = cv_bridge::toCvCopy(im, sensor_msgs::image_encodings::MONO8);
+    }
     else
-      {
-	return;
-      }
+    {
+      return;
+    }
 
     std::stringstream ss;
     ss << std::setw(10) << std::setfill('0') << this_idx;
     target_file += ss.str();
 
     if (this->dump_yaml_)
-      {
-	cv::FileStorage storage(target_file + ".yml",
-				cv::FileStorage::WRITE);
-	storage << "img" << cv_ptr->image;
-	storage.release();
-      }
+    {
+      cv::FileStorage storage(target_file + ".yml",
+                              cv::FileStorage::WRITE);
+      storage << "img" << cv_ptr->image;
+      storage.release();
+    }
 
     imwrite(target_file + ".png", cv_ptr->image);
   }
