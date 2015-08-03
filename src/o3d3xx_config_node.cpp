@@ -32,28 +32,28 @@ int main(int argc, char **argv)
   nh.param("infile", infile, std::string("-"));
 
   if (infile == "-")
+  {
+    std::string line;
+    std::ostringstream buff;
+    while (std::getline(std::cin, line))
     {
-      std::string line;
-      std::ostringstream buff;
-      while (std::getline(std::cin, line))
-	{
-	  buff << line << std::endl;
-	}
-
-      json.assign(buff.str());
+      buff << line << std::endl;
     }
+
+    json.assign(buff.str());
+  }
   else
+  {
+    std::ifstream ifs(infile, std::ios::in);
+    if (! ifs)
     {
-      std::ifstream ifs(infile, std::ios::in);
-      if (! ifs)
-	{
-	  ROS_ERROR("Failed to open file: %s", infile.c_str());
-	  return -1;
-	}
-
-      json.assign((std::istreambuf_iterator<char>(ifs)),
-		  (std::istreambuf_iterator<char>()));
+      ROS_ERROR("Failed to open file: %s", infile.c_str());
+      return -1;
     }
+
+    json.assign((std::istreambuf_iterator<char>(ifs)),
+                (std::istreambuf_iterator<char>()));
+  }
 
   ros::ServiceClient client = nh.serviceClient<o3d3xx::Config>("/Config");
 
@@ -61,15 +61,15 @@ int main(int argc, char **argv)
   srv.request.json = json;
 
   if (client.call(srv))
-    {
-      ROS_INFO("status=%d", srv.response.status);
-      ROS_INFO("msg=%s", srv.response.msg.c_str());
-    }
+  {
+    ROS_INFO("status=%d", srv.response.status);
+    ROS_INFO("msg=%s", srv.response.msg.c_str());
+  }
   else
-    {
-      ROS_ERROR("Failed to call `Config' service!");
-      return 1;
-    }
+  {
+    ROS_ERROR("Failed to call `Config' service!");
+    return 1;
+  }
 
   return 0;
 }

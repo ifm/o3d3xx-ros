@@ -81,28 +81,28 @@ public:
     //----------------------
     this->version_srv_ =
       nh.advertiseService<o3d3xx::GetVersion::Request,
-			  o3d3xx::GetVersion::Response>
+                          o3d3xx::GetVersion::Response>
       ("/GetVersion", std::bind(&O3D3xxNode::GetVersion, this,
-				std::placeholders::_1,
-				std::placeholders::_2));
+        std::placeholders::_1,
+        std::placeholders::_2));
 
     this->dump_srv_ =
       nh.advertiseService<o3d3xx::Dump::Request, o3d3xx::Dump::Response>
       ("/Dump", std::bind(&O3D3xxNode::Dump, this,
-			  std::placeholders::_1,
-			  std::placeholders::_2));
+                          std::placeholders::_1,
+                          std::placeholders::_2));
 
     this->config_srv_ =
       nh.advertiseService<o3d3xx::Config::Request, o3d3xx::Config::Response>
       ("/Config", std::bind(&O3D3xxNode::Config, this,
-			    std::placeholders::_1,
-			    std::placeholders::_2));
+                            std::placeholders::_1,
+                            std::placeholders::_2));
 
     this->rm_srv_ =
       nh.advertiseService<o3d3xx::Rm::Request, o3d3xx::Rm::Response>
       ("/Rm", std::bind(&O3D3xxNode::Rm, this,
-			std::placeholders::_1,
-			std::placeholders::_2));
+                        std::placeholders::_1,
+                        std::placeholders::_2));
   }
 
   /**
@@ -126,77 +126,83 @@ public:
     double min, max;
 
     while (ros::ok())
+    {
+      fg_lock.lock();
+      if (!this->fg_->WaitForFrame(buff.get(), this->timeout_millis_))
       {
-	fg_lock.lock();
-	if (! this->fg_->WaitForFrame(buff.get(), this->timeout_millis_))
-	  {
-	    fg_lock.unlock();
-	    ROS_WARN("Timeout waiting for camera!");
-	    continue;
-	  }
-	fg_lock.unlock();
-
-	// boost::shared_ptr vs std::shared_ptr forces us to make this copy :(
-	pcl::copyPointCloud(*(buff->Cloud().get()), *cloud);
-	cloud->header.frame_id = this->frame_id_;
-	this->cloud_pub_.publish(cloud);
-
-	depth_img = buff->DepthImage();
-	sensor_msgs::ImagePtr depth =
-	  cv_bridge::CvImage(std_msgs::Header(),
-			     "mono16", depth_img).toImageMsg();
-	depth->header.frame_id = this->frame_id_;
-	this->depth_pub_.publish(depth);
-
-	sensor_msgs::ImagePtr amplitude =
-	  cv_bridge::CvImage(std_msgs::Header(),
-			     "mono16", buff->AmplitudeImage()).toImageMsg();
-	amplitude->header.frame_id = this->frame_id_;
-	this->amplitude_pub_.publish(amplitude);
-
-	confidence_img = buff->ConfidenceImage();
-	sensor_msgs::ImagePtr confidence =
-	  cv_bridge::CvImage(std_msgs::Header(),
-			     "mono8", confidence_img).toImageMsg();
-	confidence->header.frame_id = this->frame_id_;
-	this->conf_pub_.publish(confidence);
-
-	if (this->publish_viz_images_)
-	  {
-	    // depth image with better colormap
-	    cv::minMaxIdx(depth_img, &min, &max);
-	    cv::convertScaleAbs(depth_img, depth_viz_img, 255 / max);
-	    cv::applyColorMap(depth_viz_img, depth_viz_img, cv::COLORMAP_JET);
-	    sensor_msgs::ImagePtr depth_viz =
-	      cv_bridge::CvImage(std_msgs::Header(),
-				 "bgr8", depth_viz_img).toImageMsg();
-	    depth_viz->header.frame_id = this->frame_id_;
-	    this->depth_viz_pub_.publish(depth_viz);
-
-	    // show good vs bad pixels as binary image
-	    cv::Mat good_bad_map = cv::Mat::ones(confidence_img.rows,
-						 confidence_img.cols,
-						 CV_8UC1);
-	    cv::bitwise_and(confidence_img, good_bad_map,
-			    good_bad_map);
-	    good_bad_map *= 255;
-	    sensor_msgs::ImagePtr good_bad =
-	      cv_bridge::CvImage(std_msgs::Header(),
-				 "mono8", good_bad_map).toImageMsg();
-	    good_bad->header.frame_id = this->frame_id_;
-	    this->good_bad_pub_.publish(good_bad);
-
-	    // histogram of amplitude image
-	    hist_img = o3d3xx::hist1(buff->AmplitudeImage());
-	    cv::minMaxIdx(hist_img, &min, &max);
-	    cv::convertScaleAbs(hist_img, hist_img, 255 / max);
-	    sensor_msgs::ImagePtr hist =
-	      cv_bridge::CvImage(std_msgs::Header(),
-				 "bgr8", hist_img).toImageMsg();
-	    hist->header.frame_id = this->frame_id_;
-	    this->hist_pub_.publish(hist);
-	  }
+        fg_lock.unlock();
+        ROS_WARN("Timeout waiting for camera!");
+        continue;
       }
+      fg_lock.unlock();
+
+      // boost::shared_ptr vs std::shared_ptr forces us to make this copy :(
+      pcl::copyPointCloud(*(buff->Cloud().get()), *cloud);
+      cloud->header.frame_id = this->frame_id_;
+      this->cloud_pub_.publish(cloud);
+
+      depth_img = buff->DepthImage();
+      sensor_msgs::ImagePtr depth =
+        cv_bridge::CvImage(std_msgs::Header(),
+                           "mono16",
+                           depth_img).toImageMsg();
+      depth->header.frame_id = this->frame_id_;
+      this->depth_pub_.publish(depth);
+
+      sensor_msgs::ImagePtr amplitude =
+        cv_bridge::CvImage(std_msgs::Header(),
+                           "mono16",
+                           buff->AmplitudeImage()).toImageMsg();
+      amplitude->header.frame_id = this->frame_id_;
+      this->amplitude_pub_.publish(amplitude);
+
+      confidence_img = buff->ConfidenceImage();
+      sensor_msgs::ImagePtr confidence =
+        cv_bridge::CvImage(std_msgs::Header(),
+                           "mono8",
+                           confidence_img).toImageMsg();
+      confidence->header.frame_id = this->frame_id_;
+      this->conf_pub_.publish(confidence);
+
+      if (this->publish_viz_images_)
+      {
+        // depth image with better colormap
+        cv::minMaxIdx(depth_img, &min, &max);
+        cv::convertScaleAbs(depth_img, depth_viz_img, 255 / max);
+        cv::applyColorMap(depth_viz_img, depth_viz_img, cv::COLORMAP_JET);
+        sensor_msgs::ImagePtr depth_viz =
+          cv_bridge::CvImage(std_msgs::Header(),
+                             "bgr8",
+                             depth_viz_img).toImageMsg();
+        depth_viz->header.frame_id = this->frame_id_;
+        this->depth_viz_pub_.publish(depth_viz);
+
+        // show good vs bad pixels as binary image
+        cv::Mat good_bad_map = cv::Mat::ones(confidence_img.rows,
+                                             confidence_img.cols,
+                                             CV_8UC1);
+        cv::bitwise_and(confidence_img, good_bad_map,
+                        good_bad_map);
+        good_bad_map *= 255;
+        sensor_msgs::ImagePtr good_bad =
+          cv_bridge::CvImage(std_msgs::Header(),
+                             "mono8",
+                             good_bad_map).toImageMsg();
+        good_bad->header.frame_id = this->frame_id_;
+        this->good_bad_pub_.publish(good_bad);
+
+        // histogram of amplitude image
+        hist_img = o3d3xx::hist1(buff->AmplitudeImage());
+        cv::minMaxIdx(hist_img, &min, &max);
+        cv::convertScaleAbs(hist_img, hist_img, 255 / max);
+        sensor_msgs::ImagePtr hist =
+          cv_bridge::CvImage(std_msgs::Header(),
+                             "bgr8",
+                             hist_img).toImageMsg();
+        hist->header.frame_id = this->frame_id_;
+        this->hist_pub_.publish(hist);
+      }
+    }
   }
 
   /**
@@ -206,7 +212,7 @@ public:
    * libo3d3xx library.
    */
   bool GetVersion(o3d3xx::GetVersion::Request &req,
-		  o3d3xx::GetVersion::Response &res)
+                  o3d3xx::GetVersion::Response &res)
   {
     int major, minor, patch;
     o3d3xx::version(&major, &minor, &patch);
@@ -227,19 +233,19 @@ public:
    * the camera via the `Config' service.
    */
   bool Dump(o3d3xx::Dump::Request &req,
-	    o3d3xx::Dump::Response &res)
+            o3d3xx::Dump::Response &res)
   {
     std::lock_guard<std::mutex> lock(this->fg_mutex_);
     res.status = 0;
 
     try
-      {
-	res.config = this->cam_->ToJSON();
-      }
+    {
+      res.config = this->cam_->ToJSON();
+    }
     catch (const o3d3xx::error_t& ex)
-      {
-	res.status = ex.code();
-      }
+    {
+      res.status = ex.code();
+    }
 
     this->fg_.reset(new o3d3xx::FrameGrabber(this->cam_));
     return true;
@@ -257,26 +263,26 @@ public:
    * qualified from the top-level root of the JSON tree.
    */
   bool Config(o3d3xx::Config::Request &req,
-	      o3d3xx::Config::Response &res)
+              o3d3xx::Config::Response &res)
   {
     std::lock_guard<std::mutex> lock(this->fg_mutex_);
     res.status = 0;
     res.msg = "OK";
 
     try
-      {
-	this->cam_->FromJSON(req.json);
-      }
+    {
+      this->cam_->FromJSON(req.json);
+    }
     catch (const o3d3xx::error_t& ex)
-      {
-	res.status = ex.code();
-	res.msg = ex.what();
-      }
+    {
+      res.status = ex.code();
+      res.msg = ex.what();
+    }
     catch (const std::exception& std_ex)
-      {
-	res.status = -1;
-	res.msg = std_ex.what();
-      }
+    {
+      res.status = -1;
+      res.msg = std_ex.what();
+    }
 
     this->fg_.reset(new o3d3xx::FrameGrabber(this->cam_));
     return true;
@@ -289,41 +295,41 @@ public:
    * service restricts removing the current active application.
    */
   bool Rm(o3d3xx::Rm::Request &req,
-	  o3d3xx::Rm::Response &res)
+          o3d3xx::Rm::Response &res)
   {
     std::lock_guard<std::mutex> lock(this->fg_mutex_);
     res.status = 0;
     res.msg = "OK";
 
     try
+    {
+      if (req.index > 0)
       {
-	if (req.index > 0)
-	  {
-	    this->cam_->RequestSession();
-	    this->cam_->SetOperatingMode(o3d3xx::Camera::operating_mode::EDIT);
-	    o3d3xx::DeviceConfig::Ptr dev = this->cam_->GetDeviceConfig();
+        this->cam_->RequestSession();
+        this->cam_->SetOperatingMode(o3d3xx::Camera::operating_mode::EDIT);
+        o3d3xx::DeviceConfig::Ptr dev = this->cam_->GetDeviceConfig();
 
-	    if (dev->ActiveApplication() != req.index)
-	      {
-		this->cam_->DeleteApplication(req.index);
-	      }
-	    else
-	      {
-		res.status = -1;
-		res.msg = std::string("Cannot delete active application!");
-	      }
-	  }
+        if (dev->ActiveApplication() != req.index)
+        {
+          this->cam_->DeleteApplication(req.index);
+        }
+        else
+        {
+          res.status = -1;
+          res.msg = std::string("Cannot delete active application!");
+        }
       }
+    }
     catch (const o3d3xx::error_t& ex)
-      {
-	res.status = ex.code();
-	res.msg = ex.what();
-      }
+    {
+      res.status = ex.code();
+      res.msg = ex.what();
+    }
     catch (const std::exception& std_ex)
-      {
-	res.status = -1;
-	res.msg = std_ex.what();
-      }
+    {
+      res.status = -1;
+      res.msg = std_ex.what();
+    }
 
     this->cam_->CancelSession(); // <-- OK to do this here
     this->fg_.reset(new o3d3xx::FrameGrabber(this->cam_));
