@@ -12,25 +12,10 @@ Software Compatibility Matrix
          <tr>
 		       <th>libo3d3xx version</th>
 			   <th>o3d3xx-ros</th>
-			   <th>ROS distribution</th>
+			   <th>ROS distribution(s)</th>
 		 </tr>
 		 <tr>
-			 <td>0.1.3</td>
-			 <td>0.1.0</td>
-			 <td>Indigo</td>
-		 </tr>
-		 <tr>
-			 <td>0.1.5</td>
-			 <td>0.1.1</td>
-			 <td>Indigo</td>
-		 </tr>
-		 <tr>
-			 <td>0.1.5</td>
-			 <td>0.1.2</td>
-			 <td>Indigo</td>
-		 </tr>
-		 <tr>
-			 <td>0.1.6</td>
+			 <td>0.1.7</td>
 			 <td>0.1.3</td>
 			 <td>Indigo</td>
 		 </tr>
