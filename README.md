@@ -19,6 +19,16 @@ Software Compatibility Matrix
 			 <td>0.1.3</td>
 			 <td>Indigo</td>
 		 </tr>
+		 <tr>
+			 <td>0.1.8</td>
+			 <td>NOT COMPATIBLE</td>
+			 <td>N/A</td>
+		 </tr>
+		 <tr>
+			 <td>0.1.9</td>
+			 <td>0.1.3</td>
+			 <td>Indigo</td>
+		 </tr>
 </table>
 
 Prerequisites
