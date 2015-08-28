@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include <fstream>
 #include <functional>
 #include <memory>
 #include <mutex>
@@ -30,6 +31,7 @@
 #include <ros/ros.h>
 #include <sensor_msgs/Image.h>
 #include <sensor_msgs/image_encodings.h>
+#include "o3d3xx/Dump.h"
 
 class O3D3xxFileWriterNode
 {
@@ -96,10 +98,32 @@ public:
       ("/confidence", 10,
        std::bind(&O3D3xxFileWriterNode::ImageCb, this,
                  std::placeholders::_1, "confidence"));
+
+    //----------------------
+    // Call the camera's `Dump` service, and (try to) write the
+    // current camera configuration to the output directory
+    //----------------------
+    ROS_INFO("Calling `Dump' service...");
+    ros::ServiceClient client = nh.serviceClient<o3d3xx::Dump>("/Dump");
+
+    o3d3xx::Dump srv;
+    std::string json_file = this->outdir_ + "/o3d3xx.json";
+    std::ofstream out(json_file);
+    if (client.call(srv))
+      {
+        out << srv.response.config;
+        ROS_INFO("Wrote camera configuration to: %s", json_file.c_str());
+      }
+    else
+      {
+        ROS_ERROR("Failed to call `Dump` service!");
+        ROS_WARN("Not writing camera configuration to output directory");
+      }
   }
 
   void Run()
   {
+    ROS_INFO("Starting data capture...");
     this->spinner_->start();
     ros::waitForShutdown();
   }
