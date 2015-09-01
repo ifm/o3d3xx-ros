@@ -24,6 +24,7 @@
 #include <image_transport/image_transport.h>
 #include <o3d3xx.h>
 #include <opencv2/opencv.hpp>
+#include <pcl_conversions/pcl_conversions.h>
 #include <pcl_ros/point_cloud.h>
 #include <ros/ros.h>
 #include <sensor_msgs/Image.h>
@@ -136,32 +137,33 @@ public:
       }
       fg_lock.unlock();
 
+      std_msgs::Header head = std_msgs::Header();
+      head.stamp = ros::Time::now();
+      head.frame_id = this->frame_id_;
+
       // boost::shared_ptr vs std::shared_ptr forces us to make this copy :(
       pcl::copyPointCloud(*(buff->Cloud().get()), *cloud);
-      cloud->header.frame_id = this->frame_id_;
+      cloud->header = pcl_conversions::toPCL(head);
       this->cloud_pub_.publish(cloud);
 
       depth_img = buff->DepthImage();
       sensor_msgs::ImagePtr depth =
-        cv_bridge::CvImage(std_msgs::Header(),
+        cv_bridge::CvImage(head,
                            "mono16",
                            depth_img).toImageMsg();
-      depth->header.frame_id = this->frame_id_;
       this->depth_pub_.publish(depth);
 
       sensor_msgs::ImagePtr amplitude =
-        cv_bridge::CvImage(std_msgs::Header(),
+        cv_bridge::CvImage(head,
                            "mono16",
                            buff->AmplitudeImage()).toImageMsg();
-      amplitude->header.frame_id = this->frame_id_;
       this->amplitude_pub_.publish(amplitude);
 
       confidence_img = buff->ConfidenceImage();
       sensor_msgs::ImagePtr confidence =
-        cv_bridge::CvImage(std_msgs::Header(),
+        cv_bridge::CvImage(head,
                            "mono8",
                            confidence_img).toImageMsg();
-      confidence->header.frame_id = this->frame_id_;
       this->conf_pub_.publish(confidence);
 
       if (this->publish_viz_images_)
@@ -171,10 +173,9 @@ public:
         cv::convertScaleAbs(depth_img, depth_viz_img, 255 / max);
         cv::applyColorMap(depth_viz_img, depth_viz_img, cv::COLORMAP_JET);
         sensor_msgs::ImagePtr depth_viz =
-          cv_bridge::CvImage(std_msgs::Header(),
+          cv_bridge::CvImage(head,
                              "bgr8",
                              depth_viz_img).toImageMsg();
-        depth_viz->header.frame_id = this->frame_id_;
         this->depth_viz_pub_.publish(depth_viz);
 
         // show good vs bad pixels as binary image
@@ -185,10 +186,9 @@ public:
                         good_bad_map);
         good_bad_map *= 255;
         sensor_msgs::ImagePtr good_bad =
-          cv_bridge::CvImage(std_msgs::Header(),
+          cv_bridge::CvImage(head,
                              "mono8",
                              good_bad_map).toImageMsg();
-        good_bad->header.frame_id = this->frame_id_;
         this->good_bad_pub_.publish(good_bad);
 
         // histogram of amplitude image
@@ -196,10 +196,9 @@ public:
         cv::minMaxIdx(hist_img, &min, &max);
         cv::convertScaleAbs(hist_img, hist_img, 255 / max);
         sensor_msgs::ImagePtr hist =
-          cv_bridge::CvImage(std_msgs::Header(),
+          cv_bridge::CvImage(head,
                              "bgr8",
                              hist_img).toImageMsg();
-        hist->header.frame_id = this->frame_id_;
         this->hist_pub_.publish(hist);
       }
     }
