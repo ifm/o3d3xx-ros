@@ -28,6 +28,7 @@
 #include <pcl_ros/point_cloud.h>
 #include <ros/ros.h>
 #include <sensor_msgs/Image.h>
+#include <sensor_msgs/image_encodings.h>
 #include <o3d3xx/Config.h>
 #include <o3d3xx/Dump.h>
 #include <o3d3xx/GetVersion.h>
@@ -39,6 +40,7 @@ public:
   O3D3xxNode()
     : timeout_millis_(500),
       publish_viz_images_(false),
+      publish_numpy_cloud_(false),
       spinner_(new ros::AsyncSpinner(1))
   {
     std::string camera_ip;
@@ -51,6 +53,7 @@ public:
     nh.param("password", password, o3d3xx::DEFAULT_PASSWORD);
     nh.param("timeout_millis", this->timeout_millis_, 500);
     nh.param("publish_viz_images", this->publish_viz_images_, false);
+    nh.param("publish_numpy_cloud", this->publish_numpy_cloud_, false);
 
     this->frame_id_ = ros::this_node::getName() + "_link";
 
@@ -76,6 +79,7 @@ public:
     this->conf_pub_ = it.advertise("/confidence", 1);
     this->good_bad_pub_ = it.advertise("/good_bad_pixels", 1);
     this->hist_pub_ = it.advertise("/hist", 1);
+    this->numpy_cloud_pub_ = it.advertise("/numpy_cloud", 1);
 
     //----------------------
     // Advertised services
@@ -124,6 +128,7 @@ public:
     cv::Mat depth_img;
     cv::Mat depth_viz_img;
     cv::Mat hist_img;
+    cv::Mat numpy_cloud_img;
     double min, max;
 
     while (ros::ok())
@@ -165,6 +170,40 @@ public:
                            "mono8",
                            confidence_img).toImageMsg();
       this->conf_pub_.publish(confidence);
+
+      if (this->publish_numpy_cloud_)
+      {
+        numpy_cloud_img.create(cloud->height, cloud->width, CV_32FC4);
+
+        int num_points = cloud->height * cloud->width;
+        int col = 0;
+        int matrix_col = 0;
+        int row = -1;
+        float* row_ptr;
+        for (std::size_t i = 0; i < num_points; ++i)
+          {
+            o3d3xx::PointT& pt = cloud->points[i];
+
+            col = i % cloud->width;
+            matrix_col = col * 4; // 4 channels: xyzi
+            if (col == 0)
+              {
+                row += 1;
+                row_ptr = numpy_cloud_img.ptr<float>(row);
+              }
+
+            row_ptr[matrix_col] = pt.x;
+            row_ptr[matrix_col + 1] = pt.y;
+            row_ptr[matrix_col + 2] = pt.z;
+            row_ptr[matrix_col + 3] = pt.intensity;
+          }
+
+        sensor_msgs::ImagePtr numpy_cloud =
+          cv_bridge::CvImage(head,
+                             sensor_msgs::image_encodings::TYPE_32FC4,
+                             numpy_cloud_img).toImageMsg();
+        this->numpy_cloud_pub_.publish(numpy_cloud);
+      }
 
       if (this->publish_viz_images_)
       {
@@ -339,6 +378,7 @@ public:
 private:
   int timeout_millis_;
   bool publish_viz_images_;
+  bool publish_numpy_cloud_;
   std::unique_ptr<ros::AsyncSpinner> spinner_;
   o3d3xx::Camera::Ptr cam_;
   o3d3xx::FrameGrabber::Ptr fg_;
@@ -352,6 +392,7 @@ private:
   image_transport::Publisher conf_pub_;
   image_transport::Publisher good_bad_pub_;
   image_transport::Publisher hist_pub_;
+  image_transport::Publisher numpy_cloud_pub_;
 
   ros::ServiceServer version_srv_;
   ros::ServiceServer dump_srv_;

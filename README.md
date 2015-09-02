@@ -149,14 +149,6 @@ looks basically like:
 
 Now we are ready to build the code.
 
-Old version:
-
-	$ cd ~/dev/o3d3xx-catkin
-	$ catkin_make -DCMAKE_INSTALL_PREFIX=${LPR_ROS}/o3d3xx
-	$ catkin_make install
-
-New version -- as of 4/24/15:
-
 	$ cd ~/dev/o3d3xx-catkin
 	$ catkin_make
 	$ catkin_make -DCMAKE_INSTALL_PREFIX=${LPR_ROS}/o3d3xx install
@@ -280,6 +272,22 @@ graph.
 			 `publish_viz_images` parameter is set to true at launch time.
 			 </td>
 		 </tr>
+	     <tr>
+			 <td>/o3d3xx/camera/numpy_cloud</td>
+			 <td>sensor_msgs/Image</td>
+			 <td>
+             An OpenCV image encoding (CV_32FC4) of the same point cloud that
+			 is published to `/o3d3xx/camera/cloud` where the four image planes
+			 are 0 = x, 1 = y, 2 = z, 3 = intensity (amplitude). This is to
+			 ease interoperability between PCL and numpy for doing point cloud
+			 analysis. While ROS-based python tools exist today for converting
+			 (or iterating over) point clouds to numpy, they are dreadfully
+			 slow. Using this image encoding of the point cloud enables
+			 conversion to numpy arrays at C++ speed. For performance
+			 reasons, messages are only published to this topic when the
+			 `publish_numpy_cloud` parameter is set to true at launch time.
+			 </td>
+		 </tr>
 </table>
 
 #### Advertised Services
@@ -365,6 +373,14 @@ graph.
 	    are `depth_viz`, `good_bad_pixels`, and `hist` (they are described
 	    above in the `Topics` section). These <i>viz images</i> are intended
 	    for human analysis and visualization in `rviz`.
+		</td>
+	</tr>
+	<tr>
+		<td>publish_numpy_cloud</td>
+		<td>bool</td>
+		<td>
+        Setting this parameter to true will enable publishing to the
+	    `/o3d3xx/camera/numpy_cloud` topic.
 		</td>
 	</tr>
 
