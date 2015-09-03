@@ -173,7 +173,7 @@ public:
 
       if (this->publish_numpy_cloud_)
       {
-        numpy_cloud_img.create(cloud->height, cloud->width, CV_32FC4);
+        numpy_cloud_img.create(depth_img.rows, depth_img.cols, CV_32FC4);
 
         int num_points = cloud->height * cloud->width;
         int col = 0;
