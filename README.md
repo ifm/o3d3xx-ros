@@ -273,7 +273,7 @@ graph.
 			 </td>
 		 </tr>
 	     <tr>
-			 <td>/o3d3xx/camera/numpy_cloud</td>
+			 <td>/o3d3xx/camera/xyzi_image</td>
 			 <td>sensor_msgs/Image</td>
 			 <td>
              An OpenCV image encoding (CV_32FC4) of the same point cloud that
@@ -285,7 +285,7 @@ graph.
 			 slow. Using this image encoding of the point cloud enables
 			 conversion to numpy arrays at C++ speed. For performance
 			 reasons, messages are only published to this topic when the
-			 `publish_numpy_cloud` parameter is set to true at launch time.
+			 `publish_xyzi_image` parameter is set to true at launch time.
 			 </td>
 		 </tr>
 </table>
@@ -376,11 +376,11 @@ graph.
 		</td>
 	</tr>
 	<tr>
-		<td>publish_numpy_cloud</td>
+		<td>publish_xyzi_image</td>
 		<td>bool</td>
 		<td>
         Setting this parameter to true will enable publishing to the
-	    `/o3d3xx/camera/numpy_cloud` topic.
+	    `/o3d3xx/camera/xyzi_image` topic.
 		</td>
 	</tr>
 

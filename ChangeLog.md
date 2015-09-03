@@ -3,7 +3,7 @@
 ### o3d3xx_node
 
 * All published topics now have timestamps in the message header
-* The main camera node can now publish a `numpy_cloud`. This is a
+* The main camera node can now publish an `xyzi_image`. This is a
   representation of the point cloud (same exact data) encoded as an opencv
   image (CV_32FC4) where the 4 image planes are: 0 = x, 1 = y, 2 = z, 3 =
   intensity. This has been introduced to enable easier interop between PCL and
