@@ -1,3 +1,9 @@
+## Changes between o3d3xx-ros 0.1.4 and 0.1.5
+
+### launch/camera.launch
+
+* Fixed the parent-child relationship between the tf frames
+
 ## Changes between o3d3xx-ros 0.1.3 and 0.1.4
 
 ### o3d3xx_node
