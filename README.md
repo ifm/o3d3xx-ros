@@ -1,4 +1,3 @@
-
 o3d3xx-ros
 ==========
 o3d3xx-ros is a wrapper around
@@ -10,30 +9,25 @@ Software Compatibility Matrix
 -----------------------------
 <table>
          <tr>
-		       <th>libo3d3xx version</th>
-			   <th>o3d3xx-ros</th>
-			   <th>ROS distribution(s)</th>
-		 </tr>
-		 <tr>
-			 <td>0.1.7</td>
-			 <td>0.1.3</td>
-			 <td>Indigo</td>
-		 </tr>
-		 <tr>
-			 <td>0.1.8</td>
-			 <td>NOT COMPATIBLE</td>
-			 <td>N/A</td>
-		 </tr>
-		 <tr>
-			 <td>0.1.9</td>
-			 <td>0.1.3</td>
-			 <td>Indigo</td>
-		 </tr>
-		 <tr>
-			 <td>0.1.9</td>
-			 <td>0.1.4</td>
-			 <td>Indigo</td>
-		 </tr>
+             <th>o3d3xx-ros version</th>
+             <th>libo3d3xx version</th>
+             <th>ROS distribution(s)</th>
+         </tr>
+         <tr>
+             <td>0.1.3</td>
+             <td>0.1.9</td>
+             <td>Indigo</td>
+         </tr>
+         <tr>
+             <td>0.1.4</td>
+             <td>0.1.9</td>
+             <td>Indigo</td>
+         </tr>
+         <tr>
+             <td>0.1.5</td>
+             <td>0.1.11</td>
+             <td>Indigo</td>
+         </tr>
 </table>
 
 Prerequisites
@@ -62,15 +56,15 @@ Next, you should be sure to install
 you have installed libo3d3xx via the supported debian installer. Step-by-step
 instructions for that process now follows:
 
-	$ git clone https://github.com/lovepark/libo3d3xx.git
-	$ cd libo3d3xx
-	$ mkdir build
-	$ cd build
-	$ cmake ..
-	$ make
-	$ make check
-	$ make package
-	$ sudo dpkg -i libo3d3xx_0.1.3_amd64.deb
+    $ git clone https://github.com/lovepark/libo3d3xx.git
+    $ cd libo3d3xx
+    $ mkdir build
+    $ cd build
+    $ cmake ..
+    $ make
+    $ make check
+    $ make package
+    $ sudo dpkg -i libo3d3xx_0.1.3_amd64.deb
 
 __NOTE__: The version string in the deb file may be different based upon the
 version of libo3d3xx that you are building.
@@ -79,9 +73,9 @@ If everything above went successfully, you should have libo3d3xx installed at
 `/opt/libo3d3xx`. Per the libo3d3xx README, it is also recommended that you add
 the following to your `~/.bash_profile`:
 
-	if [ -f /opt/libo3d3xx/etc/setup.bash ]; then
+    if [ -f /opt/libo3d3xx/etc/setup.bash ]; then
         source /opt/libo3d3xx/etc/setup.bash
-	fi
+    fi
 
 We now move on to building o3d3xx-ros.
 
@@ -98,69 +92,69 @@ installed. For purposes of this document, we will assume that we will install
 our ROS packages at `~/ros`. For convenience, we add the following to our
 `~/.bash_profile`:
 
-	if [ -f /opt/ros/indigo/setup.bash ]; then
-		source /opt/ros/indigo/setup.bash
-	fi
+    if [ -f /opt/ros/indigo/setup.bash ]; then
+        source /opt/ros/indigo/setup.bash
+    fi
 
-	cd ${HOME}
+    cd ${HOME}
 
-	export LPR_ROS=${HOME}/ros
+    export LPR_ROS=${HOME}/ros
 
-	if [ -d ${LPR_ROS} ]; then
-		for i in $(ls ${LPR_ROS}); do
-			if [ -d ${LPR_ROS}/${i} ]; then
-				if [ -f ${LPR_ROS}/${i}/setup.bash ]; then
-					source ${LPR_ROS}/${i}/setup.bash --extend
-				fi
-			fi
-		done
-	fi
+    if [ -d ${LPR_ROS} ]; then
+        for i in $(ls ${LPR_ROS}); do
+            if [ -d ${LPR_ROS}/${i} ]; then
+                if [ -f ${LPR_ROS}/${i}/setup.bash ]; then
+                    source ${LPR_ROS}/${i}/setup.bash --extend
+                fi
+            fi
+        done
+    fi
 
 Next, we need to get the code from github. We assume we keep all of our git
 repositories in `~/dev`.
 
-	$ cd ~/dev
-	$ git clone https://github.com/lovepark/o3d3xx-ros.git
+    $ cd ~/dev
+    $ git clone https://github.com/lovepark/o3d3xx-ros.git
 
 We now have the code in `~/dev/o3d3xx-ros`. Next, we want to create a _catkin
 workspace_ that we can use to build and install that code from. It is the
 catkin philosophy that we do not do this directly in the source directory.
 
-	$ cd ~/dev
-	$ mkdir o3d3xx-catkin
-	$ cd o3d3xx-catkin
-	$ mkdir src
-	$ cd src
-	$ catkin_init_workspace
-	$ ln -s ~/dev/o3d3xx-ros o3d3xx
+    $ cd ~/dev
+    $ mkdir o3d3xx-catkin
+    $ cd o3d3xx-catkin
+    $ mkdir src
+    $ cd src
+    $ catkin_init_workspace
+    $ ln -s ~/dev/o3d3xx-ros o3d3xx
 
 So, you should have a catkin workspace set up to build the o3d3xx-ros code that
 looks basically like:
 
-	[ ~/dev/o3d3xx-catkin/src ]
-	tpanzarella@jelly: $ pwd
-	/home/tpanzarella/dev/o3d3xx-catkin/src
+    [ ~/dev/o3d3xx-catkin/src ]
+    tpanzarella@jelly: $ pwd
+    /home/tpanzarella/dev/o3d3xx-catkin/src
 
-	[ ~/dev/o3d3xx-catkin/src ]
-	tpanzarella@jelly: $ ls -l
-	total 0
-	lrwxrwxrwx 1 tpanzarella tpanzarella 49 Dec  2 15:26 CMakeLists.txt -> /opt/ros/indigo/share/catkin/cmake/toplevel.cmake
-	lrwxrwxrwx 1 tpanzarella tpanzarella 32 Dec  2 15:24 o3d3xx -> /home/tpanzarella/dev/o3d3xx-ros
+    [ ~/dev/o3d3xx-catkin/src ]
+    tpanzarella@jelly: $ ls -l
+    total 0
+    lrwxrwxrwx 1 tpanzarella tpanzarella 49 Dec  2 15:26 CMakeLists.txt -> /opt/ros/indigo/share/catkin/cmake/toplevel.cmake
+    lrwxrwxrwx 1 tpanzarella tpanzarella 32 Dec  2 15:24 o3d3xx -> /home/tpanzarella/dev/o3d3xx-ros
 
 Now we are ready to build the code.
 
-	$ cd ~/dev/o3d3xx-catkin
-	$ catkin_make
-	$ catkin_make -DCMAKE_INSTALL_PREFIX=${LPR_ROS}/o3d3xx install
+    $ cd ~/dev/o3d3xx-catkin
+    $ catkin_make
+    $ catkin_make -DCMAKE_INSTALL_PREFIX=${LPR_ROS}/o3d3xx install
 
 The ROS package should now be installed in `~/ros/o3d3xx`. To test everything
 out you should open a fresh bash shell, and start up a ROS core:
 
-	$ roscore
+    $ roscore
 
 Open another shell and start the primary camera node:
 
-	$ roslaunch o3d3xx camera.launch ip:=192.168.10.69
+    $ roslaunch o3d3xx camera.launch ip:=192.168.10.69
 
 __NOTE__: The IP address of your camera may differ. If you are using the
 factory default (192.168.0.69), you do not need to specify it on the above
@@ -169,7 +163,7 @@ factory default (192.168.0.69), you do not need to specify it on the above
 Open another shell and start the rviz node to visualize the data coming from
 the camera:
 
-	$ optirun roslaunch o3d3xx rviz.launch
+    $ optirun roslaunch o3d3xx rviz.launch
 
 __NOTE__: You will likely not need to specify the `optirun` piece of the above
 command. We utilize that to manage an Optimus-based NVIDIA GPU via the linux
@@ -189,13 +183,13 @@ Nodes
 This node provides a real-time feed to the camera data. This node is started
 from the primary `camera.launch` file:
 
-	$ roslaunch o3d3xx camera.launch
+    $ roslaunch o3d3xx camera.launch
 
 The naming of the camera can be customized via the `ns` (namespace) and `nn`
 (node name) command line arguments passed to the `camera.launch` file. For
 example, if you specify your roslaunch command as:
 
-	$ roslaunch o3d3xx camera.launch ns:=robot nn:=front_camera
+    $ roslaunch o3d3xx camera.launch ns:=robot nn:=front_camera
 
 The node will have the name `/robot/front_camera` in the ROS computation
 graph.
@@ -203,187 +197,172 @@ graph.
 #### Published Topics
 <table>
          <tr>
-			 <th>Topic</th>
-			 <th>Message</th>
-			 <th>Description</th>
-		 </tr>
+             <th>Topic</th>
+             <th>Message</th>
+             <th>Description</th>
+         </tr>
 
-	     <tr>
-			 <td>/o3d3xx/camera/amplitude</td>
-			 <td>sensor_msgs/Image</td>
-			 <td>16-bit gray scale encoding of the sensor Amplitude image </td>
-		 </tr>
-	     <tr>
-			 <td>/o3d3xx/camera/cloud</td>
-			 <td>sensor_msgs/PointCloud2</td>
-			 <td>
-			 A 3D PCL point cloud of point type `XYZI`. In this encoding the
-			 intensity channel is represented by the corresponding pixel's
-			 amplitude data. The units of this point cloud are in meters.
-			 </td>
-		 </tr>
-	     <tr>
-			 <td>/o3d3xx/camera/confidence</td>
-			 <td>sensor_msgs/Image</td>
-			 <td>
-			 An 8-bit mono image encoding of the confidence image. The meaning
-			 of each bit of each pixel value is discussed in the official IFM
-			 documentation for the camera.
-			 </td>
-		 </tr>
-	     <tr>
-			 <td>/o3d3xx/camera/depth</td>
-			 <td>sensor_msgs/Image</td>
-			 <td>
-			 A 16-bit mono image encoding of the radial depth map from the
-			 camera. The depth units are in millimeters.
-			 </td>
-		 </tr>
-	     <tr>
-			 <td>/o3d3xx/camera/depth_viz</td>
-			 <td>sensor_msgs/Image</td>
-			 <td>
-			 A rendering of the depth image utilizing a colormap more
-			 human-friendly for visualization purposes. For performance
-			 reasons, messages are only published to this topic when the
-			 `publish_viz_images` parameter is set to true at launch time.
-			 </td>
-		 </tr>
-	     <tr>
-			 <td>/o3d3xx/camera/good_bad_pixels</td>
-			 <td>sensor_msgs/Image</td>
-			 <td>
-			 A binary image showing good vs. bad pixels on the pixel array. Bad
-			 pixels can be caused by numerous reasons (e.g., motion blur over
-			 an integration/exposure timestep). Visualizing this data is useful
-			 for when you are tuning your imager parameters. For performance
-			 reasons, messages are only published to this topic when the
-			 `publish_viz_images` parameter is set to true at launch time.
-			 </td>
-		 </tr>
-	     <tr>
-			 <td>/o3d3xx/camera/hist</td>
-			 <td>sensor_msgs/Image</td>
-			 <td>
-			 An image showing gray level distribution of the pixels in the
-			 amplitude image. This is a simple way to visualize the dynamic
-			 range of the current imager settings. For performance
-			 reasons, messages are only published to this topic when the
-			 `publish_viz_images` parameter is set to true at launch time.
-			 </td>
-		 </tr>
-	     <tr>
-			 <td>/o3d3xx/camera/xyzi_image</td>
-			 <td>sensor_msgs/Image</td>
-			 <td>
-             An OpenCV image encoding (CV_32FC4) of the same point cloud that
-			 is published to `/o3d3xx/camera/cloud` where the four image planes
-			 are 0 = x, 1 = y, 2 = z, 3 = intensity (amplitude). This is to
-			 ease interoperability between PCL and numpy for doing point cloud
-			 analysis. While ROS-based python tools exist today for converting
-			 (or iterating over) point clouds to numpy, they are dreadfully
-			 slow. Using this image encoding of the point cloud enables
-			 conversion to numpy arrays at C++ speed. For performance
-			 reasons, messages are only published to this topic when the
-			 `publish_xyzi_image` parameter is set to true at launch time.
-			 </td>
-		 </tr>
+         <tr>
+             <td>/o3d3xx/camera/amplitude</td>
+             <td>sensor_msgs/Image</td>
+             <td>16-bit gray scale encoding of the sensor Amplitude image </td>
+         </tr>
+         <tr>
+             <td>/o3d3xx/camera/cloud</td>
+             <td>sensor_msgs/PointCloud2</td>
+             <td>
+             A 3D PCL point cloud of point type `XYZI`. In this encoding the
+             intensity channel is represented by the corresponding pixel's
+             amplitude data. The units of this point cloud are in meters.
+             </td>
+         </tr>
+         <tr>
+             <td>/o3d3xx/camera/confidence</td>
+             <td>sensor_msgs/Image</td>
+             <td>
+             An 8-bit mono image encoding of the confidence image. The meaning
+             of each bit of each pixel value is discussed in the official IFM
+             documentation for the camera.
+             </td>
+         </tr>
+         <tr>
+             <td>/o3d3xx/camera/depth</td>
+             <td>sensor_msgs/Image</td>
+             <td>
+             A 16-bit mono image encoding of the radial depth map from the
+             camera. The depth units are in millimeters.
+             </td>
+         </tr>
+         <tr>
+             <td>/o3d3xx/camera/depth_viz</td>
+             <td>sensor_msgs/Image</td>
+             <td>
+             A rendering of the depth image utilizing a colormap more
+             human-friendly for visualization purposes. For performance
+             reasons, messages are only published to this topic when the
+             `publish_viz_images` parameter is set to true at launch time.
+             </td>
+         </tr>
+         <tr>
+             <td>/o3d3xx/camera/good_bad_pixels</td>
+             <td>sensor_msgs/Image</td>
+             <td>
+             A binary image showing good vs. bad pixels on the pixel array. Bad
+             pixels can be caused by numerous reasons (e.g., motion blur over
+             an integration/exposure timestep). Visualizing this data is useful
+             for when you are tuning your imager parameters. For performance
+             reasons, messages are only published to this topic when the
+             `publish_viz_images` parameter is set to true at launch time.
+             </td>
+         </tr>
+         <tr>
+             <td>/o3d3xx/camera/hist</td>
+             <td>sensor_msgs/Image</td>
+             <td>
+             An image showing gray level distribution of the pixels in the
+             amplitude image. This is a simple way to visualize the dynamic
+             range of the current imager settings. For performance
+             reasons, messages are only published to this topic when the
+             `publish_viz_images` parameter is set to true at launch time.
+             </td>
+         </tr>
+         <tr>
+             <td>/o3d3xx/camera/xyz_image</td>
+             <td>sensor_msgs/Image</td>
+             <td>
+             An OpenCV image encoding (CV_16SC3) of the same point cloud that
+             is published to `/o3d3xx/camera/cloud` where the three image planes
+             are 0 = x, 1 = y, 2 = z. Units are in millimeters yet the coord
+             frame is consistent with the point cloud.
+             </td>
+         </tr>
 </table>
 
 #### Advertised Services
 
 <table>
-	<tr>
-		<th>Service Name</th>
-		<th>Service Definition</th>
-		<th>Description</th>
-	</tr>
-	<tr>
-		<td>/o3d3xx/camera/Config</td>
-		<td><a href="srv/Config.srv">Config.srv</a></td>
-		<td>
-		Mutates camera settings based upon an input JSON file. <b>NOTE:</b> Due
+    <tr>
+        <th>Service Name</th>
+        <th>Service Definition</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>/o3d3xx/camera/Config</td>
+        <td><a href="srv/Config.srv">Config.srv</a></td>
+        <td>
+        Mutates camera settings based upon an input JSON file. <b>NOTE:</b> Due
         to what appears to be limitations in the YAML parsing of the stock ROS
-	    `rosservice` command line tool (i.e., it does not handle JSON as string
-	    payload well) you will have to use the
-	    <i>/o3d3xx/camera/config_node</i> to configure the camera. This is
-	    explained in further detail below.
-		</td>
-	</tr>
-	<tr>
-		<td>/o3d3xx/camera/Dump</td>
-		<td><a href="srv/Dump.srv">Dump.srv</a></td>
-		<td>
-		Dumps the current configuration of the camera to a JSON string. The
-	    output of this dump is suitable for editing and passing to the `Config`
-	    service for configuring the camera.
-		</td>
-	</tr>
-	<tr>
-		<td>/o3d3xx/camera/GetVersion</td>
-		<td><a href="srv/GetVersion.srv">GetVersion.srv</a></td>
-		<td>
-		Returns the current version of the underlying
-		<a href="https://github.com/lovepark/libo3d3xx">libo3d3xx</a> library
-	    that this ROS node is linked to.
-	    </td>
-	</tr>
-	<tr>
-		<td>/o3d3xx/camera/Rm</td>
-		<td><a href="srv/Rm.srv">Rm.srv</a></td>
-		<td>Removes an application from the camera. This service will restrict
-	    removing the current active application.
-	    </td>
-	</tr>
+        `rosservice` command line tool (i.e., it does not handle JSON as string
+        payload well) you will have to use the
+        <i>/o3d3xx/camera/config_node</i> to configure the camera. This is
+        explained in further detail below.
+        </td>
+    </tr>
+    <tr>
+        <td>/o3d3xx/camera/Dump</td>
+        <td><a href="srv/Dump.srv">Dump.srv</a></td>
+        <td>
+        Dumps the current configuration of the camera to a JSON string. The
+        output of this dump is suitable for editing and passing to the `Config`
+        service for configuring the camera.
+        </td>
+    </tr>
+    <tr>
+        <td>/o3d3xx/camera/GetVersion</td>
+        <td><a href="srv/GetVersion.srv">GetVersion.srv</a></td>
+        <td>
+        Returns the current version of the underlying
+        <a href="https://github.com/lovepark/libo3d3xx">libo3d3xx</a> library
+        that this ROS node is linked to.
+        </td>
+    </tr>
+    <tr>
+        <td>/o3d3xx/camera/Rm</td>
+        <td><a href="srv/Rm.srv">Rm.srv</a></td>
+        <td>Removes an application from the camera. This service will restrict
+        removing the current active application.
+        </td>
+    </tr>
 </table>
 
 #### Parameters
 
 <table>
-	<tr><th>Name</th><th>Data Type</th><th>Description</th></tr>
-	<tr>
-		<td>ip</td>
-		<td>string</td>
-		<td>IP address of the camera</td>
-	</tr>
-	<tr>
-		<td>xmlrpc_port</td>
-		<td>int</td>
-		<td>TCP port the camera's XMLRPC server is listening on</td>
-	</tr>
-	<tr>
-		<td>password</td>
-		<td>string</td>
-		<td>Password to use to connect to the camera</td>
-	</tr>
-	<tr>
-		<td>timeout_millis</td>
-		<td>int</td>
-		<td>Time, in milliseconds, to block when waiting for a frame from the
-	    camera before timing out.</td>
-	</tr>
-	<tr>
-		<td>publish_viz_images</td>
-		<td>bool</td>
-		<td>
-	    In general, for a runtime system, the core data a system will want from
-	    this camera include the `cloud`, `depth`, `amplitude`, and `confidence`
-	    images. This node will always publish those data. However, if you set
-	    this parameter to `true` a few additional images are published. These
-	    are `depth_viz`, `good_bad_pixels`, and `hist` (they are described
-	    above in the `Topics` section). These <i>viz images</i> are intended
-	    for human analysis and visualization in `rviz`.
-		</td>
-	</tr>
-	<tr>
-		<td>publish_xyzi_image</td>
-		<td>bool</td>
-		<td>
-        Setting this parameter to true will enable publishing to the
-	    `/o3d3xx/camera/xyzi_image` topic.
-		</td>
-	</tr>
-
+    <tr><th>Name</th><th>Data Type</th><th>Description</th></tr>
+    <tr>
+        <td>ip</td>
+        <td>string</td>
+        <td>IP address of the camera</td>
+    </tr>
+    <tr>
+        <td>xmlrpc_port</td>
+        <td>int</td>
+        <td>TCP port the camera's XMLRPC server is listening on</td>
+    </tr>
+    <tr>
+        <td>password</td>
+        <td>string</td>
+        <td>Password to use to connect to the camera</td>
+    </tr>
+    <tr>
+        <td>timeout_millis</td>
+        <td>int</td>
+        <td>Time, in milliseconds, to block when waiting for a frame from the
+        camera before timing out.</td>
+    </tr>
+    <tr>
+        <td>publish_viz_images</td>
+        <td>bool</td>
+        <td>
+        In general, for a runtime system, the core data a system will want from
+        this camera include the `cloud`, `depth`, `amplitude`, and `confidence`
+        images. This node will always publish those data. However, if you set
+        this parameter to `true` a few additional images are published. These
+        are `depth_viz`, `good_bad_pixels`, and `hist` (they are described
+        above in the `Topics` section). These <i>viz images</i> are intended
+        for human analysis and visualization in `rviz`.
+        </td>
+    </tr>
 </table>
 
 
@@ -393,7 +372,7 @@ This node is of type `tf/static_transform_publisher`. It establishes a frame_id
 for the camera in the global tf tree. This node is launched from the primary
 `camera.launch` file:
 
-	$ roslaunch o3d3xx camera.launch
+    $ roslaunch o3d3xx camera.launch
 
 When run as above, the tf publishing node would be named `/o3d3xx/camera_tf`
 and the camera coordinate frame would be `/o3d3xx/camera_link` in the tf tree.
@@ -402,7 +381,7 @@ You can customize this naming (to an extent) via the `ns` (namespace) and `nn`
 (node name) command line arguments passed to the `camera.launch` file. For
 example, if you specify your roslaunch command as:
 
-	$ roslaunch o3d3xx camera.launch ns:=robot nn:=front_camera
+    $ roslaunch o3d3xx camera.launch ns:=robot nn:=front_camera
 
 The node name will be `/robot/front_camera_tf` and the camera frame will
 be `/robot/front_camera_link` in the tf tree.
@@ -418,21 +397,21 @@ long-running node but rather works like a typical command-line tool would: you
 invoke it, it runs, and exits. The following command line will launch this
 node:
 
-	$ roslaunch o3d3xx config.launch
+    $ roslaunch o3d3xx config.launch
 
 #### Parameters
 
 <table>
-	<tr><th>Name</th><th>Data Type</th><th>Description</th></tr>
-	<tr>
-		<td>infile</td>
-		<td>string</td>
-		<td>
-		By default, this node will read `stdin` for a JSON string to use to
-	    pass to the `/o3d3xx/camera/Config` service. However, if this parameter
-	    is specified it will read the JSON from this file.
-		</td>
-	</tr>
+    <tr><th>Name</th><th>Data Type</th><th>Description</th></tr>
+    <tr>
+        <td>infile</td>
+        <td>string</td>
+        <td>
+        By default, this node will read `stdin` for a JSON string to use to
+        pass to the `/o3d3xx/camera/Config` service. However, if this parameter
+        is specified it will read the JSON from this file.
+        </td>
+    </tr>
 </table>
 
 ### /o3d3xx/camera/file_writer
@@ -453,7 +432,7 @@ data into MATLAB without having to fuss with
 [bag files](http://wiki.ros.org/Bags) or any other data-interchange
 issues. This node is started from the `file_writer.launch` file:
 
-	$ roslaunch o3d3xx file_writer.launch
+    $ roslaunch o3d3xx file_writer.launch
 
 The naming of the node can be customized via the `ns` (namespace) and `nn`
 (node name) command line arguments.
@@ -468,84 +447,84 @@ to feed data to MATLAB for off-line analysis.
 #### Subscribed Topics
 <table>
          <tr>
-			 <th>Topic</th>
-			 <th>Message</th>
-			 <th>Description</th>
-		 </tr>
+             <th>Topic</th>
+             <th>Message</th>
+             <th>Description</th>
+         </tr>
 
-	     <tr>
-			 <td>/o3d3xx/camera/amplitude</td>
-			 <td>sensor_msgs/Image</td>
-			 <td>
-			 Data received on this topic is written to
-			 `/tmp/o3d3xx-ros/data/amplitude/amplitude_XXX.png` where `XXX` is
-			 a monotonically increasing integer value.
-			 </td>
-		 </tr>
-	     <tr>
-			 <td>/o3d3xx/camera/cloud</td>
-			 <td>sensor_msgs/PointCloud2</td>
-			 <td>
-	         Data received on this topic is written to
-			 `/tmp/o3d3xx-ros/data/cloud/cloud_XXX.pcd` where `XXX` is a
-			 monotonically increasing integer value.
-			 </td>
-		 </tr>
-	     <tr>
-			 <td>/o3d3xx/camera/confidence</td>
-			 <td>sensor_msgs/Image</td>
-			 <td>
-			 Data received on this topic is written to
-			 `/tmp/o3d3xx-ros/data/confidence/confidence_XXX.png` where `XXX` is
-			 a monotonically increasing integer value.
-			 </td>
-		 </tr>
-	     <tr>
-			 <td>/o3d3xx/camera/depth</td>
-			 <td>sensor_msgs/Image</td>
-			 <td>
-			 Data received on this topic is written to
-			 `/tmp/o3d3xx-ros/data/depth/depth_XXX.png` where `XXX` is
-			 a monotonically increasing integer value.
-			 </td>
-		 </tr>
+         <tr>
+             <td>/o3d3xx/camera/amplitude</td>
+             <td>sensor_msgs/Image</td>
+             <td>
+             Data received on this topic is written to
+             `/tmp/o3d3xx-ros/data/amplitude/amplitude_XXX.png` where `XXX` is
+             a monotonically increasing integer value.
+             </td>
+         </tr>
+         <tr>
+             <td>/o3d3xx/camera/cloud</td>
+             <td>sensor_msgs/PointCloud2</td>
+             <td>
+             Data received on this topic is written to
+             `/tmp/o3d3xx-ros/data/cloud/cloud_XXX.pcd` where `XXX` is a
+             monotonically increasing integer value.
+             </td>
+         </tr>
+         <tr>
+             <td>/o3d3xx/camera/confidence</td>
+             <td>sensor_msgs/Image</td>
+             <td>
+             Data received on this topic is written to
+             `/tmp/o3d3xx-ros/data/confidence/confidence_XXX.png` where `XXX` is
+             a monotonically increasing integer value.
+             </td>
+         </tr>
+         <tr>
+             <td>/o3d3xx/camera/depth</td>
+             <td>sensor_msgs/Image</td>
+             <td>
+             Data received on this topic is written to
+             `/tmp/o3d3xx-ros/data/depth/depth_XXX.png` where `XXX` is
+             a monotonically increasing integer value.
+             </td>
+         </tr>
 </table>
 
 #### Parameters
 
 <table>
-	<tr><th>Name</th><th>Data Type</th><th>Description</th></tr>
-	<tr>
-		<td>outdir</td>
-		<td>string</td>
-		<td>Root-level output directory</td>
-	</tr>
-	<tr>
-		<td>dump_yaml</td>
-		<td>bool</td>
-		<td>
-	    If this is set to `true`, in addition to writing the PNG output for the
-		2D images, OpenCV YAML `FileStorage` is written as well. This is has
-	    been provided for two reasons. First, it allows for quick
-	    human-readable inspection of the data (i.e., you can use `Emacs` or
-	    even `less` to spot check some pixel values.) Second, due to its human
-	    readability, you can compare against whatever tool you are using to
-	    ingest the PNG data to ensure the decompression is in fact lossless (it
-	    should be or your PNG library is broken).
-		</td>
-	</tr>
-	<tr>
-		<td>topic_suffix</td>
-		<td>string</td>
-		<td>
-		By default this is the empty string, and usually, this is what you
-	    want. However setting this can make it convenient to have the node
-	    subscribe to throttled topics (for example). So, in that case you can
-	    set this to`_throttle` on your `roslaunch` command line and (assuming
-	    you are running the throttled nodes), this node will now subscribe to
-	    the throttled topics instead of the full-speed topics.
-		</td>
-	</tr>
+    <tr><th>Name</th><th>Data Type</th><th>Description</th></tr>
+    <tr>
+        <td>outdir</td>
+        <td>string</td>
+        <td>Root-level output directory</td>
+    </tr>
+    <tr>
+        <td>dump_yaml</td>
+        <td>bool</td>
+        <td>
+        If this is set to `true`, in addition to writing the PNG output for the
+        2D images, OpenCV YAML `FileStorage` is written as well. This is has
+        been provided for two reasons. First, it allows for quick
+        human-readable inspection of the data (i.e., you can use `Emacs` or
+        even `less` to spot check some pixel values.) Second, due to its human
+        readability, you can compare against whatever tool you are using to
+        ingest the PNG data to ensure the decompression is in fact lossless (it
+        should be or your PNG library is broken).
+        </td>
+    </tr>
+    <tr>
+        <td>topic_suffix</td>
+        <td>string</td>
+        <td>
+        By default this is the empty string, and usually, this is what you
+        want. However setting this can make it convenient to have the node
+        subscribe to throttled topics (for example). So, in that case you can
+        set this to`_throttle` on your `roslaunch` command line and (assuming
+        you are running the throttled nodes), this node will now subscribe to
+        the throttled topics instead of the full-speed topics.
+        </td>
+    </tr>
 </table>
 
 ### /rviz
@@ -554,13 +533,13 @@ This package offers a launch script that wraps the execution of `rviz` so that
 the display will be conveniently configured for visualizing the
 `/o3d3xx/camera` data. To launch this node:
 
-	$ optirun roslaunch o3d3xx rviz.launch
+    $ optirun roslaunch o3d3xx rviz.launch
 
 Running the command as above will, by default, color the point cloud with the
 data from the amplitude image (i.e., the intensity). Alternatively, you can
 color the point cloude, by default, with the X-range like:
 
-	$ optirun roslaunch o3d3xx rviz.launch range:=1
+    $ optirun roslaunch o3d3xx rviz.launch range:=1
 
 __NOTE__: You will likely not need to specify the `optirun` piece of the above
 command. We utilize that to manage an Optimus-based NVIDIA GPU via the linux
@@ -582,13 +561,13 @@ throttle `/o3d3xx/camera/cloud` to `/o3d3xx/camera/cloud_throttle`,
 `/o3d3xx/camera/confidence` to `/o3d3xx/camera/confidence_throttle`. To launch
 this node:
 
-	$ roslaunch o3d3xx throttled.launch
+    $ roslaunch o3d3xx throttled.launch
 
 By default, it will throttle the above named topics to 1 Hz. You can change the
 frequency with the `hz` command line argument. For example, to send data at 2
 Hz:
 
-	$ roslaunch o3d3xx throttled.launch hz:=2.0
+    $ roslaunch o3d3xx throttled.launch hz:=2.0
 
 Using this launch file to launch this set of nodes is strictly optional. We
 have found use for it in two ways. First, to slow down the publishing frequency
@@ -648,25 +627,25 @@ configure only that part of the camera. The only rule to follow is that all
 keys should be fully qualified. For example, to simply set the active
 application, you can use a JSON snippet like this:
 
-	{
-		"o3d3xx":
-		{
-			"Device":
-			{
-				"ActiveApplication": "2"
-			}
-		}
-	}
+    {
+        "o3d3xx":
+        {
+            "Device":
+            {
+                "ActiveApplication": "2"
+            }
+        }
+    }
 
 The above snippet is provided as an example [here](json/ex_set_active.json). To
 apply this to your camera, you can:
 
-	$ roslaunch o3d3xx config.launch infile:=/path/to/ex_set_active.json
+    $ roslaunch o3d3xx config.launch infile:=/path/to/ex_set_active.json
 
 It was also noted above that the `/o3d3xx/camera/config_node` will read `stdin`
 by default, so you could also:
 
-	$ echo '{"o3d3xx":{"Device":{"ActiveApplication":"2"}}}' | roslaunch o3d3xx config.launch
+    $ echo '{"o3d3xx":{"Device":{"ActiveApplication":"2"}}}' | roslaunch o3d3xx config.launch
 
 [Here](json/ex_add_app.json) is another example JSON file. This one will add a
 new application to the camera, using the default values for the high-dynamic
@@ -679,7 +658,7 @@ In general, a simple way to configure camera settings without having to
 memorize the JSON syntax would be to simply dump the current camera settings to
 a file:
 
-	$ rosservice call /o3d3xx/camera/Dump > /tmp/camera.json
+    $ rosservice call /o3d3xx/camera/Dump > /tmp/camera.json
 
 Then, open `/tmp/camera.json` with a text editor to create a declarative JSON
 configuration for your camera. You should be sure to delete the variable names
@@ -689,7 +668,7 @@ like, however it is not strictly necessary as the `/o3d3xx/camera/Config`
 service will leave unedited values unchanged on the camera. Once you have a
 configuration that you like, you can:
 
-	$ roslaunch o3d3xx config.launch infile:=/tmp/camera.json
+    $ roslaunch o3d3xx config.launch infile:=/tmp/camera.json
 
 You can check that your configuration is active by calling the
 `/o3d3xx/camera/Dump` service again.

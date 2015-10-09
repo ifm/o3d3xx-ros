@@ -40,7 +40,6 @@ public:
   O3D3xxNode()
     : timeout_millis_(500),
       publish_viz_images_(false),
-      publish_xyzi_image_(false),
       spinner_(new ros::AsyncSpinner(1))
   {
     std::string camera_ip;
@@ -53,7 +52,6 @@ public:
     nh.param("password", password, o3d3xx::DEFAULT_PASSWORD);
     nh.param("timeout_millis", this->timeout_millis_, 500);
     nh.param("publish_viz_images", this->publish_viz_images_, false);
-    nh.param("publish_xyzi_image", this->publish_xyzi_image_, false);
 
     this->frame_id_ = ros::this_node::getName() + "_link";
 
@@ -79,7 +77,7 @@ public:
     this->conf_pub_ = it.advertise("/confidence", 1);
     this->good_bad_pub_ = it.advertise("/good_bad_pixels", 1);
     this->hist_pub_ = it.advertise("/hist", 1);
-    this->xyzi_image_pub_ = it.advertise("/xyzi_image", 1);
+    this->xyz_image_pub_ = it.advertise("/xyz_image", 1);
 
     //----------------------
     // Advertised services
@@ -128,7 +126,6 @@ public:
     cv::Mat depth_img;
     cv::Mat depth_viz_img;
     cv::Mat hist_img;
-    cv::Mat xyzi_img;
     double min, max;
 
     while (ros::ok())
@@ -171,39 +168,11 @@ public:
                            confidence_img).toImageMsg();
       this->conf_pub_.publish(confidence);
 
-      if (this->publish_xyzi_image_)
-      {
-        xyzi_img.create(depth_img.rows, depth_img.cols, CV_32FC4);
-
-        int num_points = cloud->height * cloud->width;
-        int col = 0;
-        int matrix_col = 0;
-        int row = -1;
-        float* row_ptr;
-        for (std::size_t i = 0; i < num_points; ++i)
-          {
-            o3d3xx::PointT& pt = cloud->points[i];
-
-            col = i % cloud->width;
-            matrix_col = col * 4; // 4 channels: xyzi
-            if (col == 0)
-              {
-                row += 1;
-                row_ptr = xyzi_img.ptr<float>(row);
-              }
-
-            row_ptr[matrix_col] = pt.x;
-            row_ptr[matrix_col + 1] = pt.y;
-            row_ptr[matrix_col + 2] = pt.z;
-            row_ptr[matrix_col + 3] = pt.intensity;
-          }
-
-        sensor_msgs::ImagePtr xyzi_image_msg =
-          cv_bridge::CvImage(head,
-                             sensor_msgs::image_encodings::TYPE_32FC4,
-                             xyzi_img).toImageMsg();
-        this->xyzi_image_pub_.publish(xyzi_image_msg);
-      }
+      sensor_msgs::ImagePtr xyz_image_msg =
+        cv_bridge::CvImage(head,
+                           sensor_msgs::image_encodings::TYPE_16SC3,
+                           buff->XYZImage()).toImageMsg();
+      this->xyz_image_pub_.publish(xyz_image_msg);
 
       if (this->publish_viz_images_)
       {
@@ -378,7 +347,6 @@ public:
 private:
   int timeout_millis_;
   bool publish_viz_images_;
-  bool publish_xyzi_image_;
   std::unique_ptr<ros::AsyncSpinner> spinner_;
   o3d3xx::Camera::Ptr cam_;
   o3d3xx::FrameGrabber::Ptr fg_;
@@ -392,7 +360,7 @@ private:
   image_transport::Publisher conf_pub_;
   image_transport::Publisher good_bad_pub_;
   image_transport::Publisher hist_pub_;
-  image_transport::Publisher xyzi_image_pub_;
+  image_transport::Publisher xyz_image_pub_;
 
   ros::ServiceServer version_srv_;
   ros::ServiceServer dump_srv_;
