@@ -29,6 +29,9 @@
     <remap from="/confidence"
 	   to="/$(arg ns)/$(arg nn)/confidence$(arg topic_suffix)"/>
 
+    <remap from="/xyz_image"
+           to="/$(arg ns)/$(arg nn)/xyz_image$(arg topic_suffix)"/>
+
     <!-- services we call -->
     <remap from="/Dump" to="/$(arg ns)/$(arg nn)/Dump"/>
 

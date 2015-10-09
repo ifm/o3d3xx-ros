@@ -43,7 +43,8 @@ public:
       cloud_idx_(0),
       depth_idx_(0),
       amplitude_idx_(0),
-      confidence_idx_(0)
+      confidence_idx_(0),
+      xyz_idx_(0)
   {
     ros::NodeHandle nh("~");
     nh.param("outdir", this->outdir_, std::string("/tmp"));
@@ -51,7 +52,7 @@ public:
 
     // make sure the output directories exist
     std::vector<std::string> dirs =
-      {"cloud", "depth", "amplitude", "confidence"};
+      {"cloud", "depth", "amplitude", "confidence", "xyz_image"};
 
     for (auto& dir : dirs)
     {
@@ -98,6 +99,12 @@ public:
       ("/confidence", 10,
        std::bind(&O3D3xxFileWriterNode::ImageCb, this,
                  std::placeholders::_1, "confidence"));
+
+    this->xyz_sub_ =
+      nh.subscribe<sensor_msgs::Image>
+      ("/xyz_image", 10,
+       std::bind(&O3D3xxFileWriterNode::ImageCb, this,
+                 std::placeholders::_1, "xyz_image"));
 
     //----------------------
     // Call the camera's `Dump` service, and (try to) write the
@@ -146,10 +153,11 @@ public:
   }
 
   /**
-   * Callback on the "/depth", "/amplitude", and "/confidence" topics
+   * Callback on the "/xyz_image",
+   * "/depth", "/amplitude", and "/confidence" topics
    */
   void ImageCb(const sensor_msgs::Image::ConstPtr& im,
-         const std::string& im_type)
+               const std::string& im_type)
   {
     std::string target_file = this->outdir_;
     int this_idx = 0;
@@ -185,6 +193,17 @@ public:
       target_file += "/confidence/confidence_";
       cv_ptr = cv_bridge::toCvCopy(im, sensor_msgs::image_encodings::MONO8);
     }
+    else if (im_type == "xyz_image")
+    {
+      this->xyz_idx_mutex_.lock();
+      this_idx = this->xyz_idx_;
+      this->xyz_idx_++;
+      this->xyz_idx_mutex_.unlock();
+
+      target_file += "/xyz_image/xyz_";
+      cv_ptr =
+        cv_bridge::toCvCopy(im, sensor_msgs::image_encodings::TYPE_16SC3);
+    }
     else
     {
       return;
@@ -194,7 +213,7 @@ public:
     ss << std::setw(10) << std::setfill('0') << this_idx;
     target_file += ss.str();
 
-    if (this->dump_yaml_)
+    if (this->dump_yaml_ || im_type == "xyz_image")
     {
       cv::FileStorage storage(target_file + ".yml",
                               cv::FileStorage::WRITE);
@@ -202,7 +221,10 @@ public:
       storage.release();
     }
 
-    imwrite(target_file + ".png", cv_ptr->image);
+    if (im_type != "xyz_image")
+      {
+        imwrite(target_file + ".png", cv_ptr->image);
+      }
   }
 
 private:
@@ -213,16 +235,19 @@ private:
   ros::Subscriber depth_sub_;
   ros::Subscriber amplitude_sub_;
   ros::Subscriber confidence_sub_;
+  ros::Subscriber xyz_sub_;
 
   int cloud_idx_;
   int depth_idx_;
   int amplitude_idx_;
   int confidence_idx_;
+  int xyz_idx_;
 
   std::mutex cloud_idx_mutex_;
   std::mutex depth_idx_mutex_;
   std::mutex amplitude_idx_mutex_;
   std::mutex confidence_idx_mutex_;
+  std::mutex xyz_idx_mutex_;
 
 }; // end: class O3D3xxFileWriterNode
 

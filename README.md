@@ -28,6 +28,11 @@ Software Compatibility Matrix
              <td>0.1.11</td>
              <td>Indigo</td>
          </tr>
+         <tr>
+             <td>0.1.6</td>
+             <td>0.1.11</td>
+             <td>Indigo</td>
+         </tr>
 </table>
 
 Prerequisites
@@ -420,9 +425,10 @@ This node provides a way to subscribe to the various point cloud and image
 topics provided by the `/o3d3xx/camera` node and write the data to
 files. Specifically,
 [PCD files](http://pointclouds.org/documentation/tutorials/pcd_file_format.php)
-for the `/o3d3xx/camera/cloud` topic and PNG files for the
+for the `/o3d3xx/camera/cloud` topic, PNG files for the
 `/o3d3xx/camera/depth`, `/o3d3xx/camera/amplitude`, and
-`/o3d3xx/camera/confidence` topics. This node was created to ease
+`/o3d3xx/camera/confidence` topics, and OpenCV YAML files for the
+`/o3d3xx/camera/xyz_image` topic. This node was created to ease
 tool interoperability of performing analysis on the data provided by the O3D3xx
 camera. For example, at [Love Park Robotics](http://loveparkrobotics.com), our
 lead quant likes to use MATLAB for algorithm design and using this node to
@@ -486,6 +492,19 @@ to feed data to MATLAB for off-line analysis.
              Data received on this topic is written to
              `/tmp/o3d3xx-ros/data/depth/depth_XXX.png` where `XXX` is
              a monotonically increasing integer value.
+             </td>
+         </tr>
+         <tr>
+             <td>/o3d3xx/camera/xyz_image</td>
+             <td>sensor_msgs/Image</td>
+             <td>
+             Data received on this topic is written to
+             `/tmp/o3d3xx-ros/data/xyz_image/xyz_XXX.yml` where `XXX` is
+             a monotonically increasing integer value. The YAML file is in the
+             OpenCV `FileStorage` format (i.e., it is human readable and
+             readily ingested by OpenCV C++ or Python bindings. Parsers for
+             other languages would be a simple matter of programming
+             (SMOP).
              </td>
          </tr>
 </table>

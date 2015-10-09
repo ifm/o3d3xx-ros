@@ -1,3 +1,10 @@
+## Changes between o3d3xx-ros 0.1.5 and 0.1.6
+
+### file\_writer\_node
+
+* The `xyz_image` is now serialized to the file system in OpenCV FileStorage
+  format (YAML).
+
 ## Changes between o3d3xx-ros 0.1.4 and 0.1.5
 
 ### o3d3xx_node
