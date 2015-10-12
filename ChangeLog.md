@@ -1,6 +1,16 @@
 ## Changes between o3d3xx-ros 0.1.5 and 0.1.6
 
-### file\_writer\_node
+### launch/throttled.launch
+
+* throttles the `xyz_image` topic
+
+### launch/camera.launch
+
+* Moved to tf2 for the static\_transform\_publisher. The transform from
+  /o3d3xx/camera\_link to /o3d3xx/camera\_optical\_link is now published on
+  /tf\_static (a latched topic) for efficiency.
+
+### file_writer_node
 
 * The `xyz_image` is now serialized to the file system in OpenCV FileStorage
   format (YAML).

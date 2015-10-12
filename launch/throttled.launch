@@ -29,4 +29,10 @@
 	name="confidence_throttler"
 	args="messages /$(arg ns)/$(arg nn)/confidence $(arg hz)"/>
 
+  <node pkg="topic_tools"
+        type="throttle"
+        ns="$(arg ns)/$(arg nn)"
+        name="xyz_image_throttler"
+        args="messages /$(arg ns)/$(arg nn)/xyz_image $(arg hz)"/>
+
 </launch>
