@@ -39,10 +39,10 @@
 
   </node>
 
-  <node pkg="tf"
+  <node pkg="tf2_ros"
 	type="static_transform_publisher"
 	ns="$(arg ns)"
 	name="$(arg nn)_tf"
-	args="0 0 0 0 0 0 /$(arg ns)/$(arg nn)_link /$(arg ns)/$(arg nn)_optical_link 20"/>
+	args="0 0 0 0 0 0 /$(arg ns)/$(arg nn)_link /$(arg ns)/$(arg nn)_optical_link"/>
 
 </launch>
