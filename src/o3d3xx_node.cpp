@@ -74,6 +74,7 @@ public:
     this->depth_pub_ = it.advertise("/depth", 1);
     this->depth_viz_pub_ = it.advertise("/depth_viz", 1);
     this->amplitude_pub_ = it.advertise("/amplitude", 1);
+    this->raw_amplitude_pub_ = it.advertise("/raw_amplitude", 1);
     this->conf_pub_ = it.advertise("/confidence", 1);
     this->good_bad_pub_ = it.advertise("/good_bad_pixels", 1);
     this->hist_pub_ = it.advertise("/hist", 1);
@@ -160,6 +161,12 @@ public:
                            "mono16",
                            buff->AmplitudeImage()).toImageMsg();
       this->amplitude_pub_.publish(amplitude);
+
+      sensor_msgs::ImagePtr raw_amplitude =
+        cv_bridge::CvImage(head,
+                           "mono16",
+                           buff->RawAmplitudeImage()).toImageMsg();
+      this->raw_amplitude_pub_.publish(raw_amplitude);
 
       confidence_img = buff->ConfidenceImage();
       sensor_msgs::ImagePtr confidence =
@@ -357,6 +364,7 @@ private:
   image_transport::Publisher depth_pub_;
   image_transport::Publisher depth_viz_pub_;
   image_transport::Publisher amplitude_pub_;
+  image_transport::Publisher raw_amplitude_pub_;
   image_transport::Publisher conf_pub_;
   image_transport::Publisher good_bad_pub_;
   image_transport::Publisher hist_pub_;

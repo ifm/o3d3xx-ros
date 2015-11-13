@@ -43,6 +43,7 @@ public:
       cloud_idx_(0),
       depth_idx_(0),
       amplitude_idx_(0),
+      raw_amplitude_idx_(0),
       confidence_idx_(0),
       xyz_idx_(0)
   {
@@ -52,7 +53,8 @@ public:
 
     // make sure the output directories exist
     std::vector<std::string> dirs =
-      {"cloud", "depth", "amplitude", "confidence", "xyz_image"};
+      {"cloud", "depth", "amplitude", "confidence", "xyz_image",
+       "raw_amplitude"};
 
     for (auto& dir : dirs)
     {
@@ -93,6 +95,12 @@ public:
       ("/amplitude", 10,
        std::bind(&O3D3xxFileWriterNode::ImageCb, this,
                  std::placeholders::_1, "amplitude"));
+
+    this->raw_amplitude_sub_ =
+      nh.subscribe<sensor_msgs::Image>
+      ("/raw_amplitude", 10,
+       std::bind(&O3D3xxFileWriterNode::ImageCb, this,
+                 std::placeholders::_1, "raw_amplitude"));
 
     this->confidence_sub_ =
       nh.subscribe<sensor_msgs::Image>
@@ -154,7 +162,7 @@ public:
 
   /**
    * Callback on the "/xyz_image",
-   * "/depth", "/amplitude", and "/confidence" topics
+   * "/depth", "/amplitude", "/raw_amplitdue", and "/confidence" topics
    */
   void ImageCb(const sensor_msgs::Image::ConstPtr& im,
                const std::string& im_type)
@@ -164,50 +172,60 @@ public:
     cv_bridge::CvImagePtr cv_ptr;
 
     if (im_type == "depth")
-    {
-      this->depth_idx_mutex_.lock();
-      this_idx = this->depth_idx_;
-      this->depth_idx_++;
-      this->depth_idx_mutex_.unlock();
+      {
+        this->depth_idx_mutex_.lock();
+        this_idx = this->depth_idx_;
+        this->depth_idx_++;
+        this->depth_idx_mutex_.unlock();
 
-      target_file += "/depth/depth_";
-      cv_ptr = cv_bridge::toCvCopy(im, sensor_msgs::image_encodings::MONO16);
-    }
+        target_file += "/depth/depth_";
+        cv_ptr = cv_bridge::toCvCopy(im, sensor_msgs::image_encodings::MONO16);
+      }
     else if (im_type == "amplitude")
-    {
-      this->amplitude_idx_mutex_.lock();
-      this_idx = this->amplitude_idx_;
-      this->amplitude_idx_++;
-      this->amplitude_idx_mutex_.unlock();
+      {
+        this->amplitude_idx_mutex_.lock();
+        this_idx = this->amplitude_idx_;
+        this->amplitude_idx_++;
+        this->amplitude_idx_mutex_.unlock();
 
-      target_file += "/amplitude/amplitude_";
-      cv_ptr = cv_bridge::toCvCopy(im, sensor_msgs::image_encodings::MONO16);
-    }
+        target_file += "/amplitude/amplitude_";
+        cv_ptr = cv_bridge::toCvCopy(im, sensor_msgs::image_encodings::MONO16);
+      }
+    else if (im_type == "raw_amplitude")
+      {
+        this->raw_amplitude_idx_mutex_.lock();
+        this_idx = this->raw_amplitude_idx_;
+        this->raw_amplitude_idx_++;
+        this->raw_amplitude_idx_mutex_.unlock();
+
+        target_file += "/raw_amplitude/raw_amplitude_";
+        cv_ptr = cv_bridge::toCvCopy(im, sensor_msgs::image_encodings::MONO16);
+      }
     else if (im_type == "confidence")
-    {
-      this->confidence_idx_mutex_.lock();
-      this_idx = this->confidence_idx_;
-      this->confidence_idx_++;
-      this->confidence_idx_mutex_.unlock();
+      {
+        this->confidence_idx_mutex_.lock();
+        this_idx = this->confidence_idx_;
+        this->confidence_idx_++;
+        this->confidence_idx_mutex_.unlock();
 
-      target_file += "/confidence/confidence_";
-      cv_ptr = cv_bridge::toCvCopy(im, sensor_msgs::image_encodings::MONO8);
-    }
+        target_file += "/confidence/confidence_";
+        cv_ptr = cv_bridge::toCvCopy(im, sensor_msgs::image_encodings::MONO8);
+      }
     else if (im_type == "xyz_image")
-    {
-      this->xyz_idx_mutex_.lock();
-      this_idx = this->xyz_idx_;
-      this->xyz_idx_++;
-      this->xyz_idx_mutex_.unlock();
+      {
+        this->xyz_idx_mutex_.lock();
+        this_idx = this->xyz_idx_;
+        this->xyz_idx_++;
+        this->xyz_idx_mutex_.unlock();
 
-      target_file += "/xyz_image/xyz_";
-      cv_ptr =
-        cv_bridge::toCvCopy(im, sensor_msgs::image_encodings::TYPE_16SC3);
-    }
+        target_file += "/xyz_image/xyz_";
+        cv_ptr =
+          cv_bridge::toCvCopy(im, sensor_msgs::image_encodings::TYPE_16SC3);
+      }
     else
-    {
-      return;
-    }
+      {
+        return;
+      }
 
     std::stringstream ss;
     ss << std::setw(10) << std::setfill('0') << this_idx;
@@ -234,18 +252,21 @@ private:
   ros::Subscriber cloud_sub_;
   ros::Subscriber depth_sub_;
   ros::Subscriber amplitude_sub_;
+  ros::Subscriber raw_amplitude_sub_;
   ros::Subscriber confidence_sub_;
   ros::Subscriber xyz_sub_;
 
   int cloud_idx_;
   int depth_idx_;
   int amplitude_idx_;
+  int raw_amplitude_idx_;
   int confidence_idx_;
   int xyz_idx_;
 
   std::mutex cloud_idx_mutex_;
   std::mutex depth_idx_mutex_;
   std::mutex amplitude_idx_mutex_;
+  std::mutex raw_amplitude_idx_mutex_;
   std::mutex confidence_idx_mutex_;
   std::mutex xyz_idx_mutex_;
 

@@ -26,6 +26,7 @@
     <remap from="/depth" to="/$(arg ns)/$(arg nn)/depth"/>
     <remap from="/depth_viz" to="/$(arg ns)/$(arg nn)/depth_viz"/>
     <remap from="/amplitude" to="/$(arg ns)/$(arg nn)/amplitude"/>
+    <remap from="/raw_amplitude" to="/$(arg ns)/$(arg nn)/raw_amplitude"/>
     <remap from="/confidence" to="/$(arg ns)/$(arg nn)/confidence"/>
     <remap from="/good_bad_pixels" to="/$(arg ns)/$(arg nn)/good_bad_pixels"/>
     <remap from="/hist" to="/$(arg ns)/$(arg nn)/hist"/>

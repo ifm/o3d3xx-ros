@@ -1,3 +1,23 @@
+## Changes between o3d3xx-ros 0.1.6 and 0.1.7
+
+## o3d3xx_node
+
+* Publishes the raw amplitude image
+
+## rviz
+
+* The rviz configuration files now stack in the raw amplitude as a new pane
+  along with the normalized amplitude and the amplitude histogram.
+
+## launch/throttled.launch
+
+* throttles the `raw_amplitude` topic
+
+## file_writer_node
+
+* The `raw_amplitude` image is now serialized to the file system as a
+  (losslessly compressed) PNG.
+
 ## Changes between o3d3xx-ros 0.1.5 and 0.1.6
 
 ### launch/throttled.launch

@@ -33,6 +33,11 @@ Software Compatibility Matrix
              <td>0.1.11</td>
              <td>Indigo</td>
          </tr>
+         <tr>
+             <td>0.1.7</td>
+             <td>0.2.0</td>
+             <td>Indigo</td>
+         </tr>
 </table>
 
 Prerequisites
@@ -210,7 +215,14 @@ graph.
          <tr>
              <td>/o3d3xx/camera/amplitude</td>
              <td>sensor_msgs/Image</td>
-             <td>16-bit gray scale encoding of the sensor Amplitude image </td>
+             <td>16-bit gray scale encoding of the sensor Amplitude image
+             normalized wrt exposure time. </td>
+         </tr>
+         <tr>
+             <td>/o3d3xx/camera/raw_amplitude</td>
+             <td>sensor_msgs/Image</td>
+             <td>16-bit gray scale encoding of the sensor Amplitude image
+             non-normalized.</td>
          </tr>
          <tr>
              <td>/o3d3xx/camera/cloud</td>
@@ -426,17 +438,18 @@ topics provided by the `/o3d3xx/camera` node and write the data to
 files. Specifically,
 [PCD files](http://pointclouds.org/documentation/tutorials/pcd_file_format.php)
 for the `/o3d3xx/camera/cloud` topic, PNG files for the
-`/o3d3xx/camera/depth`, `/o3d3xx/camera/amplitude`, and
-`/o3d3xx/camera/confidence` topics, and OpenCV YAML files for the
-`/o3d3xx/camera/xyz_image` topic. This node was created to ease
-tool interoperability of performing analysis on the data provided by the O3D3xx
-camera. For example, at [Love Park Robotics](http://loveparkrobotics.com), our
-lead quant likes to use MATLAB for algorithm design and using this node to
-record data from the camera allows us to perform quick data collection tasks
-from an O3D3xx camera stream and puts us in position to immediately ingest that
-data into MATLAB without having to fuss with
-[bag files](http://wiki.ros.org/Bags) or any other data-interchange
-issues. This node is started from the `file_writer.launch` file:
+`/o3d3xx/camera/depth`, `/o3d3xx/camera/amplitude`,
+`/o3d3xx/camera/raw_amplitude`, and `/o3d3xx/camera/confidence` topics, and
+OpenCV YAML files for the `/o3d3xx/camera/xyz_image` topic. This node was
+created to ease tool interoperability of performing analysis on the data
+provided by the O3D3xx camera. For example, at
+[Love Park Robotics](http://loveparkrobotics.com), our lead quant likes to use
+MATLAB for algorithm design and using this node to record data from the camera
+allows us to perform quick data collection tasks from an O3D3xx camera stream
+and puts us in position to immediately ingest that data into MATLAB without
+having to fuss with [bag files](http://wiki.ros.org/Bags) or any other
+data-interchange issues. This node is started from the `file_writer.launch`
+file:
 
     $ roslaunch o3d3xx file_writer.launch
 
@@ -465,6 +478,15 @@ to feed data to MATLAB for off-line analysis.
              Data received on this topic is written to
              `/tmp/o3d3xx-ros/data/amplitude/amplitude_XXX.png` where `XXX` is
              a monotonically increasing integer value.
+             </td>
+         </tr>
+         <tr>
+             <td>/o3d3xx/camera/raw_amplitude</td>
+             <td>sensor_msgs/Image</td>
+             <td>
+             Data received on this topic is written to
+             `/tmp/o3d3xx-ros/data/raw_amplitude/raw_amplitude_XXX.png` where
+             `XXX` is a monotonically increasing integer value.
              </td>
          </tr>
          <tr>
@@ -576,6 +598,7 @@ This package offers a launch script that wraps the
 so that it can throttle the core topics from the camera. Specifically, it will
 throttle `/o3d3xx/camera/cloud` to `/o3d3xx/camera/cloud_throttle`,
 `/o3d3xx/camera/amplitude` to `/o3d3xx/camera/amplitude_throttle`,
+`/o3d3xx/camera/raw_amplitude_throttle`,
 `/o3d3xx/camera/depth` to `/o3d3xx/camera/depth_throttle`,
 `/o3d3xx/camera/confidence` to `/o3d3xx/camera/confidence_throttle`. To launch
 this node:

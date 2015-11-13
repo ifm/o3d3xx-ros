@@ -26,6 +26,9 @@
     <remap from="/amplitude"
 	   to="/$(arg ns)/$(arg nn)/amplitude$(arg topic_suffix)"/>
 
+    <remap from="/raw_amplitude"
+	   to="/$(arg ns)/$(arg nn)/raw_amplitude$(arg topic_suffix)"/>
+
     <remap from="/confidence"
 	   to="/$(arg ns)/$(arg nn)/confidence$(arg topic_suffix)"/>
 
