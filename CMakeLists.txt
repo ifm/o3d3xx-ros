@@ -69,6 +69,7 @@ target_link_libraries(o3d3xx_file_writer_node
   ${catkin_LIBRARIES}
   ${Boost_FILESYSTEM_LIBRARY}
   )
+add_dependencies(o3d3xx_file_writer_node ${PROJECT_NAME}_generate_messages_cpp)
 
 #############
 ## Install ##
