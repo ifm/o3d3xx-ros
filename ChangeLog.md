@@ -1,3 +1,16 @@
+## Changes between o3d3xx-ros 0.1.7 and 0.1.8
+
+## o3d3xx_node
+
+* A new parameter, `timeout_tolerance_secs` has been added. This is a timeout
+  period to wait before attempting to restart the underlying frame grabber if
+  it is currently timing out while asking for image data. This has been added
+  to add a level of robustness to things like network cables getting yanked out
+  or allowing the camera to undergo a power cycle without having to restart the
+  ROS processes. Bascially, a way of autonomously from anything that would
+  break the TCP connection between the underlying ASIO event loop in
+  `libo3d3xx` and the O3D camera's PCIC interface. Good for robots.
+
 ## Changes between o3d3xx-ros 0.1.6 and 0.1.7
 
 ## o3d3xx_node

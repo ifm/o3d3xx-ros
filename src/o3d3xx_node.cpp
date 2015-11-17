@@ -39,6 +39,7 @@ class O3D3xxNode
 public:
   O3D3xxNode()
     : timeout_millis_(500),
+      timeout_tolerance_secs_(5.0),
       publish_viz_images_(false),
       spinner_(new ros::AsyncSpinner(1))
   {
@@ -51,6 +52,7 @@ public:
     nh.param("xmlrpc_port", xmlrpc_port, (int) o3d3xx::DEFAULT_XMLRPC_PORT);
     nh.param("password", password, o3d3xx::DEFAULT_PASSWORD);
     nh.param("timeout_millis", this->timeout_millis_, 500);
+    nh.param("timeout_tolerance_secs", this->timeout_tolerance_secs_, 5.0);
     nh.param("publish_viz_images", this->publish_viz_images_, false);
 
     this->frame_id_ = ros::this_node::getName() + "_link";
@@ -129,6 +131,8 @@ public:
     cv::Mat hist_img;
     double min, max;
 
+    ros::Time last_frame = ros::Time::now();
+
     while (ros::ok())
     {
       fg_lock.lock();
@@ -136,6 +140,14 @@ public:
       {
         fg_lock.unlock();
         ROS_WARN("Timeout waiting for camera!");
+
+        if ((ros::Time::now() - last_frame).toSec() >
+            this->timeout_tolerance_secs_)
+          {
+            ROS_WARN("Attempting to restart frame grabber...");
+            this->fg_.reset(new o3d3xx::FrameGrabber(this->cam_));
+            last_frame = ros::Time::now();
+          }
         continue;
       }
       fg_lock.unlock();
@@ -143,6 +155,7 @@ public:
       std_msgs::Header head = std_msgs::Header();
       head.stamp = ros::Time::now();
       head.frame_id = this->frame_id_;
+      last_frame = head.stamp;
 
       // boost::shared_ptr vs std::shared_ptr forces us to make this copy :(
       pcl::copyPointCloud(*(buff->Cloud().get()), *cloud);
@@ -353,6 +366,7 @@ public:
 
 private:
   int timeout_millis_;
+  double timeout_tolerance_secs_;
   bool publish_viz_images_;
   std::unique_ptr<ros::AsyncSpinner> spinner_;
   o3d3xx::Camera::Ptr cam_;

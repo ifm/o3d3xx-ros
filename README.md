@@ -38,6 +38,11 @@ Software Compatibility Matrix
              <td>0.2.0</td>
              <td>Indigo</td>
          </tr>
+         <tr>
+             <td>0.1.8</td>
+             <td>0.2.0</td>
+             <td>Indigo</td>
+         </tr>
 </table>
 
 Prerequisites
@@ -366,6 +371,13 @@ graph.
         <td>int</td>
         <td>Time, in milliseconds, to block when waiting for a frame from the
         camera before timing out.</td>
+    </tr>
+    <tr>
+        <td>timeout_tolerance_secs</td>
+        <td>double</td>
+        <td>Time, in seconds, to wait before trying to restart the underlying
+        framegrabber if it is currently experiencing timeouts while trying to
+        capture image data.</td>
     </tr>
     <tr>
         <td>publish_viz_images</td>
