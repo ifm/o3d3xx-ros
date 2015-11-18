@@ -145,7 +145,9 @@ public:
             this->timeout_tolerance_secs_)
           {
             ROS_WARN("Attempting to restart frame grabber...");
+            fg_lock.lock();
             this->fg_.reset(new o3d3xx::FrameGrabber(this->cam_));
+            fg_lock.unlock();
             last_frame = ros::Time::now();
           }
         continue;
