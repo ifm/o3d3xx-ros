@@ -36,6 +36,8 @@ generate_messages(
   std_msgs
   )
 
+SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+
 ###################################
 ## catkin specific configuration ##
 ###################################
