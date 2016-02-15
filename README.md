@@ -43,6 +43,11 @@ Software Compatibility Matrix
              <td>0.2.0</td>
              <td>Indigo</td>
          </tr>
+         <tr>
+             <td>0.2.0</td>
+             <td>0.3.0</td>
+             <td>Indigo</td>
+         </tr>
 </table>
 
 Prerequisites
@@ -178,11 +183,7 @@ factory default (192.168.0.69), you do not need to specify it on the above
 Open another shell and start the rviz node to visualize the data coming from
 the camera:
 
-    $ optirun roslaunch o3d3xx rviz.launch
-
-__NOTE__: You will likely not need to specify the `optirun` piece of the above
-command. We utilize that to manage an Optimus-based NVIDIA GPU via the linux
-`bumblebee` package.
+    $ roslaunch o3d3xx rviz.launch
 
 At this point, you should see an rviz window that looks something like:
 
@@ -278,17 +279,6 @@ graph.
              </td>
          </tr>
          <tr>
-             <td>/o3d3xx/camera/hist</td>
-             <td>sensor_msgs/Image</td>
-             <td>
-             An image showing gray level distribution of the pixels in the
-             amplitude image. This is a simple way to visualize the dynamic
-             range of the current imager settings. For performance
-             reasons, messages are only published to this topic when the
-             `publish_viz_images` parameter is set to true at launch time.
-             </td>
-         </tr>
-         <tr>
              <td>/o3d3xx/camera/xyz_image</td>
              <td>sensor_msgs/Image</td>
              <td>
@@ -296,6 +286,31 @@ graph.
              is published to `/o3d3xx/camera/cloud` where the three image planes
              are 0 = x, 1 = y, 2 = z. Units are in millimeters yet the coord
              frame is consistent with the point cloud.
+             </td>
+         </tr>
+         <tr>
+             <td>/o3d3xx/camera/unit_vectors</td>
+             <td>sensor_msgs/Image</td>
+             <td>
+             An OpenCV image encoding (CV_32FC3) of the rotated unit vectors
+             that can be used together with the translation vector from the
+             camera extrinsics and the radial distance image to compute the
+             cartesian coordinates for each pixel in the imager array off-board
+             the camera. This topic is latched.
+             </td>
+         </tr>
+         <tr>
+             <td>/o3d3xx/camera/extrinsics</td>
+             <td><a href="msg/Extrinsics.msg">Extrinsics.msg</a></td>
+             <td>
+             Extrinsics as reported by the camera. The translation vector here
+             is used together with the unit vectors and the radial distance
+             image to compute the Cartesian coordinates for each pixel in the
+             imager array. It should be noted that for this message, the
+             translational units are in mm and the rotational units are in
+             degrees. This is to be consistent with the camera eventhough it is
+             not necessarily consistent with ROS conventions. Usage of this
+             message is really for very specialized use-cases.
              </td>
          </tr>
 </table>
@@ -367,6 +382,16 @@ graph.
         <td>Password to use to connect to the camera</td>
     </tr>
     <tr>
+        <td>schema_mask</td>
+        <td>uint16_t</td>
+        <td>Mask controlling which image types to stream back from the
+           camera. This is useful for numerous reasons. It allows for
+           conserving bandwidth between the host computer and the camera or
+           lessens the CPU cycles required by the camera to compute image data
+           which may result in an increased frame rate. See the o3d3xx-schema
+           command line tool for generating custom masks.</td>
+    </tr>
+    <tr>
         <td>timeout_millis</td>
         <td>int</td>
         <td>Time, in milliseconds, to block when waiting for a frame from the
@@ -387,7 +412,7 @@ graph.
         this camera include the `cloud`, `depth`, `amplitude`, and `confidence`
         images. This node will always publish those data. However, if you set
         this parameter to `true` a few additional images are published. These
-        are `depth_viz`, `good_bad_pixels`, and `hist` (they are described
+        are `depth_viz` and `good_bad_pixels` (they are described
         above in the `Topics` section). These <i>viz images</i> are intended
         for human analysis and visualization in `rviz`.
         </td>
@@ -586,17 +611,10 @@ This package offers a launch script that wraps the execution of `rviz` so that
 the display will be conveniently configured for visualizing the
 `/o3d3xx/camera` data. To launch this node:
 
-    $ optirun roslaunch o3d3xx rviz.launch
+    $ roslaunch o3d3xx rviz.launch
 
-Running the command as above will, by default, color the point cloud with the
-data from the amplitude image (i.e., the intensity). Alternatively, you can
-color the point cloude, by default, with the X-range like:
-
-    $ optirun roslaunch o3d3xx rviz.launch range:=1
-
-__NOTE__: You will likely not need to specify the `optirun` piece of the above
-command. We utilize that to manage an Optimus-based NVIDIA GPU via the linux
-`bumblebee` package.
+Running the command as above will color the point cloud with the
+data from the normalized amplitude image (i.e., the intensity).
 
 The rviz window should look something like (assuming you are coloring the point
 cloud with the intensity data):

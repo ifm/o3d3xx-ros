@@ -1,3 +1,48 @@
+## Changes between o3d3xx-ros 0.1.8 and 0.2.0
+
+## o3d3xx_node
+
+* Aware of pluggable pcic schema masks
+* Publishes unit vectors (on a latched topic)
+* Publishes camera extrinsics
+* Now that we are publishing a proper transform between the camera frame and
+  the optical frame (see below) we are tagging our published topics with the
+  appropriate frame_id. Specfically, the cartesian data are marked to be in the
+  camera frame (using ROS conventions) and the other data are marked as in the
+  optical frame (O3D conventions).
+
+## launch/camera.launch
+
+* You can now pass a schema mask parameter to the camera to selectively choose
+  which images are streamed back from the camera to the host.
+
+* Now that we are providing the ability to compute the Cartesian data off-board
+  the camera, the tf2 static\_transform\_publisher is now publishing out a
+  proper transform between the camera frame and the optical frame. If you
+  compute the Cartesian data off-board the camera by utilizing the extrinsics,
+  unit vectors, and radial distance image, those computed Cartesian values will
+  be expressed in the camera optical frame. To get them into a standard ROS
+  coord frame, the data will need to be transformed. By publishing this
+  transform via tf2, users can use the tf2 API to compute the transformation.
+
+## launch/o3d3xx.rviz
+
+* Added an Axes marker to the display (not selected by default). This is
+  necessary if you want to inspect the difference between the camera frame and
+  its optical frame. Since there is no translation, only a rotation, flipping
+  the coord on an axes marker seems easier to grok than how the tf display is
+  rendering.
+
+## cmake/Findlibo3d3xx.cmake
+
+* Aware of new `libo3d3xx` default install location into `/usr`
+
+## Deprecations and Eliminations
+
+* The amplitude histogram is no longer being published.
+* The `rviz` config that colors the point cloud pixels with the x-depth has
+  been eliminated. Pixels will be colored with the normalized amplitude.
+
 ## Changes between o3d3xx-ros 0.1.7 and 0.1.8
 
 ## o3d3xx_node

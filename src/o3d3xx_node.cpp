@@ -19,7 +19,9 @@
 #include <memory>
 #include <mutex>
 #include <sstream>
+#include <stdexcept>
 #include <string>
+#include <vector>
 #include <cv_bridge/cv_bridge.h>
 #include <image_transport/image_transport.h>
 #include <o3d3xx.h>
@@ -33,12 +35,14 @@
 #include <o3d3xx/Dump.h>
 #include <o3d3xx/GetVersion.h>
 #include <o3d3xx/Rm.h>
+#include <o3d3xx/Extrinsics.h>
 
 class O3D3xxNode
 {
 public:
   O3D3xxNode()
-    : timeout_millis_(500),
+    : schema_mask_(o3d3xx::DEFAULT_SCHEMA_MASK),
+      timeout_millis_(500),
       timeout_tolerance_secs_(5.0),
       publish_viz_images_(false),
       spinner_(new ros::AsyncSpinner(1))
@@ -46,16 +50,21 @@ public:
     std::string camera_ip;
     int xmlrpc_port;
     std::string password;
+    int schema_mask;
 
     ros::NodeHandle nh("~");
     nh.param("ip", camera_ip, o3d3xx::DEFAULT_IP);
     nh.param("xmlrpc_port", xmlrpc_port, (int) o3d3xx::DEFAULT_XMLRPC_PORT);
     nh.param("password", password, o3d3xx::DEFAULT_PASSWORD);
+    nh.param("schema_mask", schema_mask, (int) o3d3xx::DEFAULT_SCHEMA_MASK);
     nh.param("timeout_millis", this->timeout_millis_, 500);
     nh.param("timeout_tolerance_secs", this->timeout_tolerance_secs_, 5.0);
     nh.param("publish_viz_images", this->publish_viz_images_, false);
 
+    this->schema_mask_ = static_cast<std::uint16_t>(schema_mask);
+
     this->frame_id_ = ros::this_node::getName() + "_link";
+    this->optical_frame_id_ = ros::this_node::getName() + "_optical_link";
 
     //-----------------------------------------
     // Instantiate the camera and frame-grabber
@@ -63,8 +72,11 @@ public:
     this->cam_ =
       std::make_shared<o3d3xx::Camera>(camera_ip, xmlrpc_port, password);
 
+    // NOTE: we initially only want to stream in the unit vectors, we switch
+    // to the requested mask, *after* we publish the unit vectors at least
+    // once.
     this->fg_ =
-      std::make_shared<o3d3xx::FrameGrabber>(this->cam_);
+      std::make_shared<o3d3xx::FrameGrabber>(this->cam_, o3d3xx::IMG_UVEC);
 
     //----------------------
     // Published topics
@@ -79,8 +91,15 @@ public:
     this->raw_amplitude_pub_ = it.advertise("/raw_amplitude", 1);
     this->conf_pub_ = it.advertise("/confidence", 1);
     this->good_bad_pub_ = it.advertise("/good_bad_pixels", 1);
-    this->hist_pub_ = it.advertise("/hist", 1);
     this->xyz_image_pub_ = it.advertise("/xyz_image", 1);
+
+    // NOTE: not using ImageTransport here ... having issues with the
+    // latching. I need to investigate further. A "normal" publisher seems to
+    // work.
+    this->uvec_pub_ =
+      nh.advertise<sensor_msgs::Image>("/unit_vectors", 1, true);
+
+    this->extrinsics_pub_ = nh.advertise<o3d3xx::Extrinsics>("/extrinsics", 1);
 
     //----------------------
     // Advertised services
@@ -128,10 +147,13 @@ public:
     cv::Mat confidence_img;
     cv::Mat depth_img;
     cv::Mat depth_viz_img;
-    cv::Mat hist_img;
     double min, max;
 
+    std::vector<float> extrinsics(6);
+
     ros::Time last_frame = ros::Time::now();
+
+    bool got_uvec = false;
 
     while (ros::ok())
     {
@@ -146,7 +168,16 @@ public:
           {
             ROS_WARN("Attempting to restart frame grabber...");
             fg_lock.lock();
-            this->fg_.reset(new o3d3xx::FrameGrabber(this->cam_));
+            if (got_uvec)
+              {
+                this->fg_.reset(new o3d3xx::FrameGrabber(this->cam_,
+                                                         this->schema_mask_));
+              }
+            else
+              {
+                this->fg_.reset(new o3d3xx::FrameGrabber(this->cam_,
+                                                         o3d3xx::IMG_UVEC));
+              }
             fg_lock.unlock();
             last_frame = ros::Time::now();
           }
@@ -159,6 +190,32 @@ public:
       head.frame_id = this->frame_id_;
       last_frame = head.stamp;
 
+      std_msgs::Header optical_head = std_msgs::Header();
+      optical_head.stamp = head.stamp;
+      optical_head.frame_id = this->optical_frame_id_;
+
+      // publish unit vectors once on a latched topic, then re-initialize the
+      // framegrabber with the user's requested schema mask
+      if (! got_uvec)
+        {
+          sensor_msgs::ImagePtr uvec_msg =
+            cv_bridge::CvImage(optical_head,
+                               sensor_msgs::image_encodings::TYPE_32FC3,
+                               buff->UnitVectors()).toImageMsg();
+          this->uvec_pub_.publish(uvec_msg);
+
+          ROS_INFO("Got unit vectors, restarting framegrabber with mask: %d",
+                   (int) this->schema_mask_);
+
+          fg_lock.lock();
+          got_uvec = true;
+          this->fg_.reset(new o3d3xx::FrameGrabber(this->cam_,
+                                                   this->schema_mask_));
+          fg_lock.unlock();
+
+          continue;
+        }
+
       // boost::shared_ptr vs std::shared_ptr forces us to make this copy :(
       pcl::copyPointCloud(*(buff->Cloud().get()), *cloud);
       cloud->header = pcl_conversions::toPCL(head);
@@ -166,26 +223,26 @@ public:
 
       depth_img = buff->DepthImage();
       sensor_msgs::ImagePtr depth =
-        cv_bridge::CvImage(head,
+        cv_bridge::CvImage(optical_head,
                            "mono16",
                            depth_img).toImageMsg();
       this->depth_pub_.publish(depth);
 
       sensor_msgs::ImagePtr amplitude =
-        cv_bridge::CvImage(head,
+        cv_bridge::CvImage(optical_head,
                            "mono16",
                            buff->AmplitudeImage()).toImageMsg();
       this->amplitude_pub_.publish(amplitude);
 
       sensor_msgs::ImagePtr raw_amplitude =
-        cv_bridge::CvImage(head,
+        cv_bridge::CvImage(optical_head,
                            "mono16",
                            buff->RawAmplitudeImage()).toImageMsg();
       this->raw_amplitude_pub_.publish(raw_amplitude);
 
       confidence_img = buff->ConfidenceImage();
       sensor_msgs::ImagePtr confidence =
-        cv_bridge::CvImage(head,
+        cv_bridge::CvImage(optical_head,
                            "mono8",
                            confidence_img).toImageMsg();
       this->conf_pub_.publish(confidence);
@@ -196,6 +253,24 @@ public:
                            buff->XYZImage()).toImageMsg();
       this->xyz_image_pub_.publish(xyz_image_msg);
 
+      extrinsics = buff->Extrinsics();
+      o3d3xx::Extrinsics extrinsics_msg;
+      extrinsics_msg.header = optical_head;
+      try
+        {
+          extrinsics_msg.tx = extrinsics.at(0);
+          extrinsics_msg.ty = extrinsics.at(1);
+          extrinsics_msg.tz = extrinsics.at(2);
+          extrinsics_msg.rot_x = extrinsics.at(3);
+          extrinsics_msg.rot_y = extrinsics.at(4);
+          extrinsics_msg.rot_z = extrinsics.at(5);
+        }
+      catch (const std::out_of_range& ex)
+        {
+          ROS_WARN("out-of-range error fetching extrinsics");
+        }
+      this->extrinsics_pub_.publish(extrinsics_msg);
+
       if (this->publish_viz_images_)
       {
         // depth image with better colormap
@@ -203,7 +278,7 @@ public:
         cv::convertScaleAbs(depth_img, depth_viz_img, 255 / max);
         cv::applyColorMap(depth_viz_img, depth_viz_img, cv::COLORMAP_JET);
         sensor_msgs::ImagePtr depth_viz =
-          cv_bridge::CvImage(head,
+          cv_bridge::CvImage(optical_head,
                              "bgr8",
                              depth_viz_img).toImageMsg();
         this->depth_viz_pub_.publish(depth_viz);
@@ -216,20 +291,10 @@ public:
                         good_bad_map);
         good_bad_map *= 255;
         sensor_msgs::ImagePtr good_bad =
-          cv_bridge::CvImage(head,
+          cv_bridge::CvImage(optical_head,
                              "mono8",
                              good_bad_map).toImageMsg();
         this->good_bad_pub_.publish(good_bad);
-
-        // histogram of amplitude image
-        hist_img = o3d3xx::hist1(buff->AmplitudeImage());
-        cv::minMaxIdx(hist_img, &min, &max);
-        cv::convertScaleAbs(hist_img, hist_img, 255 / max);
-        sensor_msgs::ImagePtr hist =
-          cv_bridge::CvImage(head,
-                             "bgr8",
-                             hist_img).toImageMsg();
-        this->hist_pub_.publish(hist);
       }
     }
   }
@@ -276,7 +341,7 @@ public:
       res.status = ex.code();
     }
 
-    this->fg_.reset(new o3d3xx::FrameGrabber(this->cam_));
+    this->fg_.reset(new o3d3xx::FrameGrabber(this->cam_, this->schema_mask_));
     return true;
   }
 
@@ -313,7 +378,7 @@ public:
       res.msg = std_ex.what();
     }
 
-    this->fg_.reset(new o3d3xx::FrameGrabber(this->cam_));
+    this->fg_.reset(new o3d3xx::FrameGrabber(this->cam_, this->schema_mask_));
     return true;
   }
 
@@ -361,12 +426,13 @@ public:
     }
 
     this->cam_->CancelSession(); // <-- OK to do this here
-    this->fg_.reset(new o3d3xx::FrameGrabber(this->cam_));
+    this->fg_.reset(new o3d3xx::FrameGrabber(this->cam_, this->schema_mask_));
     return true;
   }
 
 
 private:
+  std::uint16_t schema_mask_;
   int timeout_millis_;
   double timeout_tolerance_secs_;
   bool publish_viz_images_;
@@ -376,14 +442,17 @@ private:
   std::mutex fg_mutex_;
 
   std::string frame_id_;
+  std::string optical_frame_id_;
+
   ros::Publisher cloud_pub_;
+  ros::Publisher uvec_pub_;
+  ros::Publisher extrinsics_pub_;
   image_transport::Publisher depth_pub_;
   image_transport::Publisher depth_viz_pub_;
   image_transport::Publisher amplitude_pub_;
   image_transport::Publisher raw_amplitude_pub_;
   image_transport::Publisher conf_pub_;
   image_transport::Publisher good_bad_pub_;
-  image_transport::Publisher hist_pub_;
   image_transport::Publisher xyz_image_pub_;
 
   ros::ServiceServer version_srv_;

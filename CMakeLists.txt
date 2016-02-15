@@ -10,18 +10,23 @@ find_package(Boost REQUIRED COMPONENTS filesystem)
 find_package(catkin REQUIRED COMPONENTS
              image_transport
              pcl_ros
-	     cv_bridge
-	     roscpp
-	     sensor_msgs
-	     std_msgs
-	     tf
-	     message_generation
-	     message_runtime
-	     )
+             cv_bridge
+             roscpp
+             sensor_msgs
+             std_msgs
+             tf
+             message_generation
+             message_runtime
+             )
 
 #######################################
 ## Declare ROS messages and services ##
 #######################################
+
+add_message_files(
+  FILES
+  Extrinsics.msg
+  )
 
 add_service_files(
   FILES

@@ -6,6 +6,7 @@
   <arg name="ip" default="192.168.0.69"/>
   <arg name="xmlrpc_port" default="80"/>
   <arg name="password" default=""/>
+  <arg name="schema_mask" default="15"/>
   <arg name="timeout_millis" default="500"/>
   <arg name="timeout_tolerance_secs" default="5.0"/>
   <arg name="publish_viz_images" default="true"/>
@@ -21,6 +22,7 @@
     <param name="ip" value="$(arg ip)"/>
     <param name="xmlrpc_port" value="$(arg xmlrpc_port)"/>
     <param name="password" value="$(arg password)"/>
+    <param name="schema_mask" value="$(arg schema_mask)"/>
     <param name="timeout_millis" value="$(arg timeout_millis)"/>
     <param name="timeout_tolerance_secs"
            value="$(arg timeout_tolerance_secs)"/>
@@ -33,9 +35,10 @@
     <remap from="/amplitude" to="/$(arg ns)/$(arg nn)/amplitude"/>
     <remap from="/raw_amplitude" to="/$(arg ns)/$(arg nn)/raw_amplitude"/>
     <remap from="/confidence" to="/$(arg ns)/$(arg nn)/confidence"/>
+    <remap from="/unit_vectors" to="/$(arg ns)/$(arg nn)/unit_vectors"/>
     <remap from="/good_bad_pixels" to="/$(arg ns)/$(arg nn)/good_bad_pixels"/>
-    <remap from="/hist" to="/$(arg ns)/$(arg nn)/hist"/>
     <remap from="/xyz_image" to="/$(arg ns)/$(arg nn)/xyz_image"/>
+    <remap from="/extrinsics" to="/$(arg ns)/$(arg nn)/extrinsics"/>
 
     <!-- advertised services -->
     <remap from="/GetVersion" to="/$(arg ns)/$(arg nn)/GetVersion"/>
@@ -49,7 +52,7 @@
 	type="static_transform_publisher"
 	ns="$(arg ns)"
 	name="$(arg nn)_tf"
-	args="0 0 0 0 0 0 /$(arg ns)/$(arg nn)_link /$(arg ns)/$(arg nn)_optical_link"
+	args="0 0 0 -1.5707963267948966 0 -1.5707963267948966 /$(arg ns)/$(arg nn)_link /$(arg ns)/$(arg nn)_optical_link"
 	respawn="$(arg respawn)" />
 
 </launch>
