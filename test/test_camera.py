@@ -36,8 +36,6 @@ class TestCamera(unittest.TestCase):
         self.uvec_ = None
         self.extrinsics_ = None
 
-        self.trans_ = None # transform from optical frame to ROS/camera frame
-
     def test_camera(self):
         time.sleep(2.0) # <-- let rosmaster and camera node start
         rospy.init_node('test_camera')

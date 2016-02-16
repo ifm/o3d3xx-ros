@@ -165,6 +165,9 @@ Now we are ready to build the code.
 
     $ cd ~/dev/o3d3xx-catkin
     $ catkin_make
+    $ cd build
+    $ make run_tests
+    $ cd ..
     $ catkin_make -DCMAKE_INSTALL_PREFIX=${LPR_ROS}/o3d3xx install
 
 The ROS package should now be installed in `~/ros/o3d3xx`. To test everything
@@ -469,6 +472,9 @@ node:
 </table>
 
 ### /o3d3xx/camera/file_writer
+
+**NOTE:** This node has been deprecated and will be going away in the next
+  release.
 
 This node provides a way to subscribe to the various point cloud and image
 topics provided by the `/o3d3xx/camera` node and write the data to

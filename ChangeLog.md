@@ -55,6 +55,9 @@ with live data.
 * The amplitude histogram is no longer being published.
 * The `rviz` config that colors the point cloud pixels with the x-depth has
   been eliminated. Pixels will be colored with the normalized amplitude.
+* FileWriteNode has been deprecated. It is slated to disappear in the next
+  minor release and definitely will be vaporized by 1.0.0. Data collection
+  pipelines should be updated to use `rosbag` or some other tool.
 
 ## Changes between o3d3xx-ros 0.1.7 and 0.1.8
 

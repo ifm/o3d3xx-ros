@@ -138,6 +138,12 @@ public:
 
   void Run()
   {
+    ROS_WARN("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+    ROS_WARN("This node has been deprecated and is going away soon.");
+    ROS_WARN("It is already out-of-date, and will no longer be maintained.");
+    ROS_WARN("Update your data collection pipeline tools NOW!");
+    ROS_WARN("You have been warned. Have a nice day.");
+    ROS_WARN("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
     ROS_INFO("Starting data capture...");
     this->spinner_->start();
     ros::waitForShutdown();
