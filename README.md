@@ -432,7 +432,7 @@ for the camera in the global tf tree. This node is launched from the primary
     $ roslaunch o3d3xx camera.launch
 
 When run as above, the tf publishing node would be named `/o3d3xx/camera_tf`
-and the camera coordinate frame would be `/o3d3xx/camera_link` in the tf tree.
+and the camera coordinate frame would be `o3d3xx/camera_link` in the tf tree.
 
 You can customize this naming (to an extent) via the `ns` (namespace) and `nn`
 (node name) command line arguments passed to the `camera.launch` file. For
@@ -441,7 +441,7 @@ example, if you specify your roslaunch command as:
     $ roslaunch o3d3xx camera.launch ns:=robot nn:=front_camera
 
 The node name will be `/robot/front_camera_tf` and the camera frame will
-be `/robot/front_camera_link` in the tf tree.
+be `robot/front_camera_link` in the tf tree.
 
 ### /o3d3xx/camera/config_node
 
