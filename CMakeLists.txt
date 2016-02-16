@@ -100,3 +100,17 @@ install(TARGETS
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
   )
+
+######################
+## Node-level tests ##
+######################
+
+if(CATKIN_ENABLE_TESTING)
+  find_package(rostest REQUIRED)
+  add_rostest(
+    test/camera.test
+    # ARGS myarg1:=foo
+    )
+
+  catkin_add_nosetests(test)
+endif()

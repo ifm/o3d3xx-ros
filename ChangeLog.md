@@ -37,6 +37,19 @@
 
 * Aware of new `libo3d3xx` default install location into `/usr`
 
+## test/test_camera.py
+
+* Added new unit test that tests:
+  - Getting data from the camera
+  - Computing the Cartesian data and comparing it to ground truth
+  - To do the comparison to ground truther, the computed cartesian data
+    must also be transformed, to do that we use the tf2 API and hence The
+    transform from the optical frame to the camera frame that we are
+    publishing is also tested.
+
+NOTE: The unit test(s) currently require the hardware to be present as it works
+with live data.
+
 ## Deprecations and Eliminations
 
 * The amplitude histogram is no longer being published.

@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+
+<launch>
+  <include file="$(find o3d3xx)/launch/camera.launch"/>
+
+  <test pkg="o3d3xx" test-name="test_camera" type="test_camera.py">
+    <remap from="/depth" to="/o3d3xx/camera/depth"/>
+    <remap from="/unit_vectors" to="/o3d3xx/camera/unit_vectors"/>
+    <remap from="/xyz_image" to="/o3d3xx/camera/xyz_image"/>
+    <remap from="/extrinsics" to="/o3d3xx/camera/extrinsics"/>
+  </test>
+</launch>

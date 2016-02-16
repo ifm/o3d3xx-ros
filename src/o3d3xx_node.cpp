@@ -63,8 +63,10 @@ public:
 
     this->schema_mask_ = static_cast<std::uint16_t>(schema_mask);
 
-    this->frame_id_ = ros::this_node::getName() + "_link";
-    this->optical_frame_id_ = ros::this_node::getName() + "_optical_link";
+    this->frame_id_ =
+      std::string(ros::this_node::getName() + "_link").substr(1);
+    this->optical_frame_id_ =
+      std::string(ros::this_node::getName() + "_optical_link").substr(1);
 
     //-----------------------------------------
     // Instantiate the camera and frame-grabber
