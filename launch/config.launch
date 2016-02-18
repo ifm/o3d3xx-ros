@@ -5,15 +5,17 @@
   <arg name="nn" default="camera"/>
   <arg name="infile" default="-"/>
 
-  <node pkg="o3d3xx"
-	type="o3d3xx_config_node"
-	ns="$(arg ns)/$(arg nn)"
-	name="config_node"
-	output="screen">
+  <!-- TODO: Consider removing the group and let the includer determine the
+      namespace using a group. -->
+  <group ns="$(arg ns)/$(arg nn)">
+    <node pkg="o3d3xx"
+    type="o3d3xx_config_node"
+    name="config_node"
+    output="screen">
 
-    <param name="infile" value="$(arg infile)"/>
-    <remap from="/Config" to="/$(arg ns)/$(arg nn)/Config"/>
+      <param name="infile" value="$(arg infile)"/>
 
-  </node>
+    </node>
+  </group>
 
 </launch>

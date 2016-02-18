@@ -10,49 +10,56 @@
   <arg name="timeout_millis" default="500"/>
   <arg name="timeout_tolerance_secs" default="5.0"/>
   <arg name="publish_viz_images" default="true"/>
+  <arg name="frame_id_base" default="$(arg ns)/$(arg nn)" />
   <arg name="respawn" default="false"/>
 
-  <node pkg="o3d3xx"
-	type="o3d3xx_node"
-	ns="$(arg ns)"
-	name="$(arg nn)"
-	output="screen"
-	respawn="$(arg respawn)">
+  <!-- TODO: Consider removing the group tag and let the includer determine the
+      namespace using a group. -->
+  <group ns="$(arg ns)">
+    <node pkg="o3d3xx"
+        type="o3d3xx_node"
+        name="$(arg nn)"
+        output="screen"
+        respawn="$(arg respawn)">
 
-    <param name="ip" value="$(arg ip)"/>
-    <param name="xmlrpc_port" value="$(arg xmlrpc_port)"/>
-    <param name="password" value="$(arg password)"/>
-    <param name="schema_mask" value="$(arg schema_mask)"/>
-    <param name="timeout_millis" value="$(arg timeout_millis)"/>
-    <param name="timeout_tolerance_secs"
-           value="$(arg timeout_tolerance_secs)"/>
-    <param name="publish_viz_images" value="$(arg publish_viz_images)"/>
+      <param name="ip" value="$(arg ip)"/>
+      <param name="xmlrpc_port" value="$(arg xmlrpc_port)"/>
+      <param name="password" value="$(arg password)"/>
+      <param name="schema_mask" value="$(arg schema_mask)"/>
+      <param name="timeout_millis" value="$(arg timeout_millis)"/>
+      <param name="timeout_tolerance_secs"
+             value="$(arg timeout_tolerance_secs)"/>
+      <param name="publish_viz_images" value="$(arg publish_viz_images)"/>
+      <param name="frame_id_base" value="$(arg frame_id_base)" />
 
-    <!-- published topics -->
-    <remap from="/cloud" to="/$(arg ns)/$(arg nn)/cloud"/>
-    <remap from="/depth" to="/$(arg ns)/$(arg nn)/depth"/>
-    <remap from="/depth_viz" to="/$(arg ns)/$(arg nn)/depth_viz"/>
-    <remap from="/amplitude" to="/$(arg ns)/$(arg nn)/amplitude"/>
-    <remap from="/raw_amplitude" to="/$(arg ns)/$(arg nn)/raw_amplitude"/>
-    <remap from="/confidence" to="/$(arg ns)/$(arg nn)/confidence"/>
-    <remap from="/unit_vectors" to="/$(arg ns)/$(arg nn)/unit_vectors"/>
-    <remap from="/good_bad_pixels" to="/$(arg ns)/$(arg nn)/good_bad_pixels"/>
-    <remap from="/xyz_image" to="/$(arg ns)/$(arg nn)/xyz_image"/>
-    <remap from="/extrinsics" to="/$(arg ns)/$(arg nn)/extrinsics"/>
+      <!-- TODO: Consider removing $(arg nn) from your topics to keep them
+          shorter, give the includer more flexibility, and all of these remaps
+          dissapear. -->
+      <!-- published topics -->
+      <remap from="cloud" to="$(arg nn)/cloud"/>
+      <remap from="depth" to="$(arg nn)/depth"/>
+      <remap from="depth_viz" to="$(arg nn)/depth_viz"/>
+      <remap from="amplitude" to="$(arg nn)/amplitude"/>
+      <remap from="raw_amplitude" to="$(arg nn)/raw_amplitude"/>
+      <remap from="confidence" to="$(arg nn)/confidence"/>
+      <remap from="unit_vectors" to="$(arg nn)/unit_vectors"/>
+      <remap from="good_bad_pixels" to="$(arg nn)/good_bad_pixels"/>
+      <remap from="xyz_image" to="$(arg nn)/xyz_image"/>
+      <remap from="extrinsics" to="$(arg nn)/extrinsics"/>
 
-    <!-- advertised services -->
-    <remap from="/GetVersion" to="/$(arg ns)/$(arg nn)/GetVersion"/>
-    <remap from="/Dump" to="/$(arg ns)/$(arg nn)/Dump"/>
-    <remap from="/Config" to="/$(arg ns)/$(arg nn)/Config"/>
-    <remap from="/Rm" to="/$(arg ns)/$(arg nn)/Rm"/>
+      <!-- advertised services -->
+      <remap from="GetVersion" to="$(arg nn)/GetVersion"/>
+      <remap from="Dump" to="$(arg nn)/Dump"/>
+      <remap from="Config" to="$(arg nn)/Config"/>
+      <remap from="Rm" to="$(arg nn)/Rm"/>
 
-  </node>
+    </node>
 
-  <node pkg="tf2_ros"
-	type="static_transform_publisher"
-	ns="$(arg ns)"
-	name="$(arg nn)_tf"
-	args="0 0 0 -1.5707963267948966 0 -1.5707963267948966 $(arg ns)/$(arg nn)_link $(arg ns)/$(arg nn)_optical_link"
-	respawn="$(arg respawn)" />
+    <node pkg="tf2_ros"
+        type="static_transform_publisher"
+        name="$(arg nn)_tf"
+        args="0 0 0 -1.5707963267948966 0 -1.5707963267948966 $(arg frame_id_base)_link $(arg frame_id_base)_optical_link"
+        respawn="$(arg respawn)" />
+  </group>
 
 </launch>
