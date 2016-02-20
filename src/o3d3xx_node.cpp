@@ -53,15 +53,16 @@ public:
     int schema_mask;
     std::string frame_id_base;
 
-    ros::NodeHandle nh("~");
-    nh.param("ip", camera_ip, o3d3xx::DEFAULT_IP);
-    nh.param("xmlrpc_port", xmlrpc_port, (int) o3d3xx::DEFAULT_XMLRPC_PORT);
-    nh.param("password", password, o3d3xx::DEFAULT_PASSWORD);
-    nh.param("schema_mask", schema_mask, (int) o3d3xx::DEFAULT_SCHEMA_MASK);
-    nh.param("timeout_millis", this->timeout_millis_, 500);
-    nh.param("timeout_tolerance_secs", this->timeout_tolerance_secs_, 5.0);
-    nh.param("publish_viz_images", this->publish_viz_images_, false);
-    nh.param("frame_id_base", frame_id_base, std::string(ros::this_node::getName()).substr(1));
+    ros::NodeHandle nh; // public
+    ros::NodeHandle np("~"); // private
+    np.param("ip", camera_ip, o3d3xx::DEFAULT_IP);
+    np.param("xmlrpc_port", xmlrpc_port, (int) o3d3xx::DEFAULT_XMLRPC_PORT);
+    np.param("password", password, o3d3xx::DEFAULT_PASSWORD);
+    np.param("schema_mask", schema_mask, (int) o3d3xx::DEFAULT_SCHEMA_MASK);
+    np.param("timeout_millis", this->timeout_millis_, 500);
+    np.param("timeout_tolerance_secs", this->timeout_tolerance_secs_, 5.0);
+    np.param("publish_viz_images", this->publish_viz_images_, false);
+    np.param("frame_id_base", frame_id_base, std::string(ros::this_node::getName()).substr(1));
 
     this->schema_mask_ = static_cast<std::uint16_t>(schema_mask);
 
