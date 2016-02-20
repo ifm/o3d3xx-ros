@@ -5,40 +5,36 @@
   <arg name="nn" default="camera"/>
   <arg name="hz" default="1.0"/>
 
-  <node pkg="topic_tools"
-	type="throttle"
-	ns="$(arg ns)/$(arg nn)"
-	name="cloud_throttler"
-	args="messages /$(arg ns)/$(arg nn)/cloud $(arg hz)"/>
-
-  <node pkg="topic_tools"
-	type="throttle"
-	ns="$(arg ns)/$(arg nn)"
-	name="depth_throttler"
-	args="messages /$(arg ns)/$(arg nn)/depth $(arg hz)"/>
-
-  <node pkg="topic_tools"
-	type="throttle"
-	ns="$(arg ns)/$(arg nn)"
-	name="amplitude_throttler"
-	args="messages /$(arg ns)/$(arg nn)/amplitude $(arg hz)"/>
-
-  <node pkg="topic_tools"
-	type="throttle"
-	ns="$(arg ns)/$(arg nn)"
-	name="raw_amplitude_throttler"
-	args="messages /$(arg ns)/$(arg nn)/raw_amplitude $(arg hz)"/>
-
-  <node pkg="topic_tools"
-	type="throttle"
-	ns="$(arg ns)/$(arg nn)"
-	name="confidence_throttler"
-	args="messages /$(arg ns)/$(arg nn)/confidence $(arg hz)"/>
-
-  <node pkg="topic_tools"
+  <group ns="$(arg ns)/$(arg nn)">
+    <node pkg="topic_tools"
         type="throttle"
-        ns="$(arg ns)/$(arg nn)"
+        name="cloud_throttler"
+        args="messages $(arg ns)/$(arg nn)/cloud $(arg hz)"/>
+
+    <node pkg="topic_tools"
+        type="throttle"
+        name="depth_throttler"
+        args="messages $(arg ns)/$(arg nn)/depth $(arg hz)"/>
+
+    <node pkg="topic_tools"
+        type="throttle"
+        name="amplitude_throttler"
+        args="messages $(arg ns)/$(arg nn)/amplitude $(arg hz)"/>
+
+    <node pkg="topic_tools"
+        type="throttle"
+        name="raw_amplitude_throttler"
+        args="messages $(arg ns)/$(arg nn)/raw_amplitude $(arg hz)"/>
+
+    <node pkg="topic_tools"
+        type="throttle"
+        name="confidence_throttler"
+        args="messages $(arg ns)/$(arg nn)/confidence $(arg hz)"/>
+
+    <node pkg="topic_tools"
+        type="throttle"
         name="xyz_image_throttler"
-        args="messages /$(arg ns)/$(arg nn)/xyz_image $(arg hz)"/>
+        args="messages $(arg ns)/$(arg nn)/xyz_image $(arg hz)"/>
+  </group>
 
 </launch>

@@ -7,37 +7,27 @@
   <arg name="dump_yaml" default="false"/>
   <arg name="topic_suffix" default=""/>
 
-  <node pkg="o3d3xx"
-	type="o3d3xx_file_writer_node"
-	ns="$(arg ns)/$(arg nn)"
-	name="file_writer"
-	output="screen">
+  <group ns="$(arg ns)/$(arg nn)">
+    <node pkg="o3d3xx"
+        type="o3d3xx_file_writer_node"
+        name="file_writer"
+        output="screen">
 
-    <param name="outdir" value="$(arg outdir)"/>
-    <param name="dump_yaml" value="$(arg dump_yaml)"/>
+      <param name="outdir" value="$(arg outdir)"/>
+      <param name="dump_yaml" value="$(arg dump_yaml)"/>
 
-    <!-- subscribed topics -->
-    <remap from="/cloud"
-	   to="/$(arg ns)/$(arg nn)/cloud$(arg topic_suffix)"/>
+      <!-- subscribed topics -->
+      <remap from="cloud" to="cloud$(arg topic_suffix)"/>
+      <remap from="depth" to="depth$(arg topic_suffix)"/>
+      <remap from="amplitude" to="amplitude$(arg topic_suffix)"/>
+      <remap from="raw_amplitude" to="raw_amplitude$(arg topic_suffix)"/>
+      <remap from="confidence" to="confidence$(arg topic_suffix)"/>
+      <remap from="xyz_image" to="xyz_image$(arg topic_suffix)"/>
 
-    <remap from="/depth"
-	   to="/$(arg ns)/$(arg nn)/depth$(arg topic_suffix)"/>
+      <!-- services we call -->
+      <remap from="Dump" to="Dump"/>
 
-    <remap from="/amplitude"
-	   to="/$(arg ns)/$(arg nn)/amplitude$(arg topic_suffix)"/>
-
-    <remap from="/raw_amplitude"
-	   to="/$(arg ns)/$(arg nn)/raw_amplitude$(arg topic_suffix)"/>
-
-    <remap from="/confidence"
-	   to="/$(arg ns)/$(arg nn)/confidence$(arg topic_suffix)"/>
-
-    <remap from="/xyz_image"
-           to="/$(arg ns)/$(arg nn)/xyz_image$(arg topic_suffix)"/>
-
-    <!-- services we call -->
-    <remap from="/Dump" to="/$(arg ns)/$(arg nn)/Dump"/>
-
-  </node>
+    </node>
+  </group>
 
 </launch>

@@ -51,22 +51,23 @@ public:
     int xmlrpc_port;
     std::string password;
     int schema_mask;
+    std::string frame_id_base;
 
-    ros::NodeHandle nh("~");
-    nh.param("ip", camera_ip, o3d3xx::DEFAULT_IP);
-    nh.param("xmlrpc_port", xmlrpc_port, (int) o3d3xx::DEFAULT_XMLRPC_PORT);
-    nh.param("password", password, o3d3xx::DEFAULT_PASSWORD);
-    nh.param("schema_mask", schema_mask, (int) o3d3xx::DEFAULT_SCHEMA_MASK);
-    nh.param("timeout_millis", this->timeout_millis_, 500);
-    nh.param("timeout_tolerance_secs", this->timeout_tolerance_secs_, 5.0);
-    nh.param("publish_viz_images", this->publish_viz_images_, false);
+    ros::NodeHandle nh; // public
+    ros::NodeHandle np("~"); // private
+    np.param("ip", camera_ip, o3d3xx::DEFAULT_IP);
+    np.param("xmlrpc_port", xmlrpc_port, (int) o3d3xx::DEFAULT_XMLRPC_PORT);
+    np.param("password", password, o3d3xx::DEFAULT_PASSWORD);
+    np.param("schema_mask", schema_mask, (int) o3d3xx::DEFAULT_SCHEMA_MASK);
+    np.param("timeout_millis", this->timeout_millis_, 500);
+    np.param("timeout_tolerance_secs", this->timeout_tolerance_secs_, 5.0);
+    np.param("publish_viz_images", this->publish_viz_images_, false);
+    np.param("frame_id_base", frame_id_base, std::string(ros::this_node::getName()).substr(1));
 
     this->schema_mask_ = static_cast<std::uint16_t>(schema_mask);
 
-    this->frame_id_ =
-      std::string(ros::this_node::getName() + "_link").substr(1);
-    this->optical_frame_id_ =
-      std::string(ros::this_node::getName() + "_optical_link").substr(1);
+    this->frame_id_ = frame_id_base + "_link";
+    this->optical_frame_id_ = frame_id_base + "_optical_link";
 
     //-----------------------------------------
     // Instantiate the camera and frame-grabber
@@ -84,24 +85,24 @@ public:
     // Published topics
     //----------------------
     this->cloud_pub_ =
-      nh.advertise<pcl::PointCloud<o3d3xx::PointT> >("/cloud", 1);
+      nh.advertise<pcl::PointCloud<o3d3xx::PointT> >("cloud", 1);
 
     image_transport::ImageTransport it(nh);
-    this->depth_pub_ = it.advertise("/depth", 1);
-    this->depth_viz_pub_ = it.advertise("/depth_viz", 1);
-    this->amplitude_pub_ = it.advertise("/amplitude", 1);
-    this->raw_amplitude_pub_ = it.advertise("/raw_amplitude", 1);
-    this->conf_pub_ = it.advertise("/confidence", 1);
-    this->good_bad_pub_ = it.advertise("/good_bad_pixels", 1);
-    this->xyz_image_pub_ = it.advertise("/xyz_image", 1);
+    this->depth_pub_ = it.advertise("depth", 1);
+    this->depth_viz_pub_ = it.advertise("depth_viz", 1);
+    this->amplitude_pub_ = it.advertise("amplitude", 1);
+    this->raw_amplitude_pub_ = it.advertise("raw_amplitude", 1);
+    this->conf_pub_ = it.advertise("confidence", 1);
+    this->good_bad_pub_ = it.advertise("good_bad_pixels", 1);
+    this->xyz_image_pub_ = it.advertise("xyz_image", 1);
 
     // NOTE: not using ImageTransport here ... having issues with the
     // latching. I need to investigate further. A "normal" publisher seems to
     // work.
     this->uvec_pub_ =
-      nh.advertise<sensor_msgs::Image>("/unit_vectors", 1, true);
+      nh.advertise<sensor_msgs::Image>("unit_vectors", 1, true);
 
-    this->extrinsics_pub_ = nh.advertise<o3d3xx::Extrinsics>("/extrinsics", 1);
+    this->extrinsics_pub_ = nh.advertise<o3d3xx::Extrinsics>("extrinsics", 1);
 
     //----------------------
     // Advertised services
@@ -109,25 +110,25 @@ public:
     this->version_srv_ =
       nh.advertiseService<o3d3xx::GetVersion::Request,
                           o3d3xx::GetVersion::Response>
-      ("/GetVersion", std::bind(&O3D3xxNode::GetVersion, this,
+      ("GetVersion", std::bind(&O3D3xxNode::GetVersion, this,
         std::placeholders::_1,
         std::placeholders::_2));
 
     this->dump_srv_ =
       nh.advertiseService<o3d3xx::Dump::Request, o3d3xx::Dump::Response>
-      ("/Dump", std::bind(&O3D3xxNode::Dump, this,
+      ("Dump", std::bind(&O3D3xxNode::Dump, this,
                           std::placeholders::_1,
                           std::placeholders::_2));
 
     this->config_srv_ =
       nh.advertiseService<o3d3xx::Config::Request, o3d3xx::Config::Response>
-      ("/Config", std::bind(&O3D3xxNode::Config, this,
+      ("Config", std::bind(&O3D3xxNode::Config, this,
                             std::placeholders::_1,
                             std::placeholders::_2));
 
     this->rm_srv_ =
       nh.advertiseService<o3d3xx::Rm::Request, o3d3xx::Rm::Response>
-      ("/Rm", std::bind(&O3D3xxNode::Rm, this,
+      ("Rm", std::bind(&O3D3xxNode::Rm, this,
                         std::placeholders::_1,
                         std::placeholders::_2));
   }
