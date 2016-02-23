@@ -1,3 +1,28 @@
+## Changes between o3d3xx-ros 0.2.0 and 0.2.1
+
+## Frame id is configurable and topic names are relative
+
+* See [PR17](https://github.com/lovepark/o3d3xx-ros/pull/17)
+
+## libo3d3xx 0.4.0
+
+* The new modularized `libo3d3xx` is now used as the underlying driver.
+
+## test/test_services
+
+* New test to ensure calling the `/Dump` and `/Config` services work.
+
+## cmake/FindXXX
+
+* Copied the following FindXXX cmake scripts from `libo3d3xx`:
+  * Findo3d3xx\_camera
+  * Findo3d3xx\_framegrabber
+  * Findo3d3xx\_image
+
+## Deprecations and Eliminations
+
+* FileWriteNode has been removed from project. Use `rosbag`.
+
 ## Changes between o3d3xx-ros 0.1.8 and 0.2.0
 
 ## o3d3xx_node

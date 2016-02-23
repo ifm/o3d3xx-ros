@@ -17,10 +17,10 @@
       namespace using a group. -->
   <group ns="$(arg ns)">
     <node pkg="o3d3xx"
-        type="o3d3xx_node"
-        name="$(arg nn)"
-        output="screen"
-        respawn="$(arg respawn)">
+          type="o3d3xx_node"
+          name="$(arg nn)"
+          output="screen"
+          respawn="$(arg respawn)">
 
       <param name="ip" value="$(arg ip)"/>
       <param name="xmlrpc_port" value="$(arg xmlrpc_port)"/>

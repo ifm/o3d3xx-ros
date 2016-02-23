@@ -48,6 +48,11 @@ Software Compatibility Matrix
              <td>0.3.0</td>
              <td>Indigo</td>
          </tr>
+         <tr>
+             <td>0.2.1</td>
+             <td>0.4.0</td>
+             <td>Indigo</td>
+         </tr>
 </table>
 
 Prerequisites
@@ -82,20 +87,6 @@ instructions for that process now follows:
     $ cd build
     $ cmake ..
     $ make
-    $ make check
-    $ make package
-    $ sudo dpkg -i libo3d3xx_0.1.3_amd64.deb
-
-__NOTE__: The version string in the deb file may be different based upon the
-version of libo3d3xx that you are building.
-
-If everything above went successfully, you should have libo3d3xx installed at
-`/opt/libo3d3xx`. Per the libo3d3xx README, it is also recommended that you add
-the following to your `~/.bash_profile`:
-
-    if [ -f /opt/libo3d3xx/etc/setup.bash ]; then
-        source /opt/libo3d3xx/etc/setup.bash
-    fi
 
 We now move on to building o3d3xx-ros.
 
@@ -420,6 +411,11 @@ graph.
         for human analysis and visualization in `rviz`.
         </td>
     </tr>
+    <tr>
+        <td>frame_id_base</td>
+        <td>string</td>
+        <td>tf frame prefix</td>
+    </tr>
 </table>
 
 
@@ -434,9 +430,9 @@ for the camera in the global tf tree. This node is launched from the primary
 When run as above, the tf publishing node would be named `/o3d3xx/camera_tf`
 and the camera coordinate frame would be `o3d3xx/camera_link` in the tf tree.
 
-You can customize this naming (to an extent) via the `ns` (namespace) and `nn`
-(node name) command line arguments passed to the `camera.launch` file. For
-example, if you specify your roslaunch command as:
+You can customize this naming via the `frame_id_base` arg or implicitly through
+the `ns` (namespace) and `nn` (node name) command line arguments passed to the
+`camera.launch` file. For example, if you specify your roslaunch command as:
 
     $ roslaunch o3d3xx camera.launch ns:=robot nn:=front_camera
 
@@ -467,146 +463,6 @@ node:
         By default, this node will read `stdin` for a JSON string to use to
         pass to the `/o3d3xx/camera/Config` service. However, if this parameter
         is specified it will read the JSON from this file.
-        </td>
-    </tr>
-</table>
-
-### /o3d3xx/camera/file_writer
-
-**NOTE:** This node has been deprecated and will be going away in the next
-  release.
-
-This node provides a way to subscribe to the various point cloud and image
-topics provided by the `/o3d3xx/camera` node and write the data to
-files. Specifically,
-[PCD files](http://pointclouds.org/documentation/tutorials/pcd_file_format.php)
-for the `/o3d3xx/camera/cloud` topic, PNG files for the
-`/o3d3xx/camera/depth`, `/o3d3xx/camera/amplitude`,
-`/o3d3xx/camera/raw_amplitude`, and `/o3d3xx/camera/confidence` topics, and
-OpenCV YAML files for the `/o3d3xx/camera/xyz_image` topic. This node was
-created to ease tool interoperability of performing analysis on the data
-provided by the O3D3xx camera. For example, at
-[Love Park Robotics](http://loveparkrobotics.com), our lead quant likes to use
-MATLAB for algorithm design and using this node to record data from the camera
-allows us to perform quick data collection tasks from an O3D3xx camera stream
-and puts us in position to immediately ingest that data into MATLAB without
-having to fuss with [bag files](http://wiki.ros.org/Bags) or any other
-data-interchange issues. This node is started from the `file_writer.launch`
-file:
-
-    $ roslaunch o3d3xx file_writer.launch
-
-The naming of the node can be customized via the `ns` (namespace) and `nn`
-(node name) command line arguments.
-
-By default, this node will write its output to `/tmp/o3d3xx-ros/data` but that
-can be customized with the `outdir` parameter passed on the command line to
-`file_writer.launch`.
-
-[Here](doc/matlab_tutorial.md) is a brief writeup on how you can use this node
-to feed data to MATLAB for off-line analysis.
-
-#### Subscribed Topics
-<table>
-         <tr>
-             <th>Topic</th>
-             <th>Message</th>
-             <th>Description</th>
-         </tr>
-
-         <tr>
-             <td>/o3d3xx/camera/amplitude</td>
-             <td>sensor_msgs/Image</td>
-             <td>
-             Data received on this topic is written to
-             `/tmp/o3d3xx-ros/data/amplitude/amplitude_XXX.png` where `XXX` is
-             a monotonically increasing integer value.
-             </td>
-         </tr>
-         <tr>
-             <td>/o3d3xx/camera/raw_amplitude</td>
-             <td>sensor_msgs/Image</td>
-             <td>
-             Data received on this topic is written to
-             `/tmp/o3d3xx-ros/data/raw_amplitude/raw_amplitude_XXX.png` where
-             `XXX` is a monotonically increasing integer value.
-             </td>
-         </tr>
-         <tr>
-             <td>/o3d3xx/camera/cloud</td>
-             <td>sensor_msgs/PointCloud2</td>
-             <td>
-             Data received on this topic is written to
-             `/tmp/o3d3xx-ros/data/cloud/cloud_XXX.pcd` where `XXX` is a
-             monotonically increasing integer value.
-             </td>
-         </tr>
-         <tr>
-             <td>/o3d3xx/camera/confidence</td>
-             <td>sensor_msgs/Image</td>
-             <td>
-             Data received on this topic is written to
-             `/tmp/o3d3xx-ros/data/confidence/confidence_XXX.png` where `XXX` is
-             a monotonically increasing integer value.
-             </td>
-         </tr>
-         <tr>
-             <td>/o3d3xx/camera/depth</td>
-             <td>sensor_msgs/Image</td>
-             <td>
-             Data received on this topic is written to
-             `/tmp/o3d3xx-ros/data/depth/depth_XXX.png` where `XXX` is
-             a monotonically increasing integer value.
-             </td>
-         </tr>
-         <tr>
-             <td>/o3d3xx/camera/xyz_image</td>
-             <td>sensor_msgs/Image</td>
-             <td>
-             Data received on this topic is written to
-             `/tmp/o3d3xx-ros/data/xyz_image/xyz_XXX.yml` where `XXX` is
-             a monotonically increasing integer value. The YAML file is in the
-             OpenCV `FileStorage` format (i.e., it is human readable and
-             readily ingested by OpenCV C++ or Python bindings. Parsers for
-             other languages would be a simple matter of programming
-             (SMOP).
-             </td>
-         </tr>
-</table>
-
-#### Parameters
-
-<table>
-    <tr><th>Name</th><th>Data Type</th><th>Description</th></tr>
-    <tr>
-        <td>outdir</td>
-        <td>string</td>
-        <td>Root-level output directory</td>
-    </tr>
-    <tr>
-        <td>dump_yaml</td>
-        <td>bool</td>
-        <td>
-        If this is set to `true`, in addition to writing the PNG output for the
-        2D images, OpenCV YAML `FileStorage` is written as well. This is has
-        been provided for two reasons. First, it allows for quick
-        human-readable inspection of the data (i.e., you can use `Emacs` or
-        even `less` to spot check some pixel values.) Second, due to its human
-        readability, you can compare against whatever tool you are using to
-        ingest the PNG data to ensure the decompression is in fact lossless (it
-        should be or your PNG library is broken).
-        </td>
-    </tr>
-    <tr>
-        <td>topic_suffix</td>
-        <td>string</td>
-        <td>
-        By default this is the empty string, and usually, this is what you
-        want. However setting this can make it convenient to have the node
-        subscribe to throttled topics (for example). So, in that case you can
-        set this to`_throttle` on your `roslaunch` command line and (assuming
-        you are running the throttled nodes), this node will now subscribe to
-        the throttled topics instead of the full-speed topics.
         </td>
     </tr>
 </table>

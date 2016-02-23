@@ -5,7 +5,9 @@ set(CMAKE_MODULE_PATH
   "${PROJECT_SOURCE_DIR}/cmake"
   ${CMAKE_MODULE_PATH}
   )
-find_package(libo3d3xx REQUIRED)
+find_package(o3d3xx_camera 0.4.0 EXACT REQUIRED)
+find_package(o3d3xx_framegrabber 0.4.0 EXACT REQUIRED)
+find_package(o3d3xx_image 0.4.0 EXACT REQUIRED)
 find_package(Boost REQUIRED COMPONENTS filesystem)
 find_package(catkin REQUIRED COMPONENTS
              image_transport
@@ -49,17 +51,22 @@ catkin_package()
 #############
 ##  Build  ##
 #############
+add_compile_options(-std=c++11)
 
 include_directories(
   ${catkin_INCLUDE_DIRS}
-  ${libo3d3xx_INCLUDE_DIRS}
+  ${O3D3XX_CAMERA_INCLUDE_DIRS}
+  ${O3D3XX_FRAMEGRABBER_INCLUDE_DIRS}
+  ${O3D3XX_IMAGE_INCLUDE_DIRS}
   )
 
 add_executable(o3d3xx_node src/o3d3xx_node.cpp)
 
 target_link_libraries(o3d3xx_node
   ${catkin_LIBRARIES}
-  ${libo3d3xx_LIBRARIES}
+  ${O3D3XX_CAMERA_LIBRARIES}
+  ${O3D3XX_FRAMEGRABBER_LIBRARIES}
+  ${O3D3XX_IMAGE_LIBRARIES}
   )
 add_dependencies(o3d3xx_node ${PROJECT_NAME}_generate_messages_cpp)
 
@@ -68,13 +75,6 @@ target_link_libraries(o3d3xx_config_node
   ${catkin_LIBRARIES}
   )
 add_dependencies(o3d3xx_config_node ${PROJECT_NAME}_generate_messages_cpp)
-
-add_executable(o3d3xx_file_writer_node src/o3d3xx_file_writer_node.cpp)
-target_link_libraries(o3d3xx_file_writer_node
-  ${catkin_LIBRARIES}
-  ${Boost_FILESYSTEM_LIBRARY}
-  )
-add_dependencies(o3d3xx_file_writer_node ${PROJECT_NAME}_generate_messages_cpp)
 
 #############
 ## Install ##
@@ -95,7 +95,6 @@ install(FILES
 install(TARGETS
   o3d3xx_node
   o3d3xx_config_node
-  o3d3xx_file_writer_node
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
@@ -107,10 +106,7 @@ install(TARGETS
 
 if(CATKIN_ENABLE_TESTING)
   find_package(rostest REQUIRED)
-  add_rostest(
-    test/camera.test
-    # ARGS myarg1:=foo
-    )
-
+  add_rostest(test/camera.test)
+  add_rostest(test/services.test)
   catkin_add_nosetests(test)
 endif()

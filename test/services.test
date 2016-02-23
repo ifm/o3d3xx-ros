@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+
+<launch>
+  <include file="$(find o3d3xx)/launch/camera.launch"/>
+
+  <test pkg="o3d3xx" test-name="test_services" type="test_services.py">
+    <remap from="/Dump" to="/o3d3xx/camera/Dump"/>
+    <remap from="/Config" to="/o3d3xx/camera/Config"/>
+  </test>
+</launch>

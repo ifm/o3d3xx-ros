@@ -24,13 +24,15 @@
 #include <vector>
 #include <cv_bridge/cv_bridge.h>
 #include <image_transport/image_transport.h>
-#include <o3d3xx.h>
 #include <opencv2/opencv.hpp>
 #include <pcl_conversions/pcl_conversions.h>
 #include <pcl_ros/point_cloud.h>
 #include <ros/ros.h>
 #include <sensor_msgs/Image.h>
 #include <sensor_msgs/image_encodings.h>
+#include <o3d3xx_camera.h>
+#include <o3d3xx_framegrabber.h>
+#include <o3d3xx_image.h>
 #include <o3d3xx/Config.h>
 #include <o3d3xx/Dump.h>
 #include <o3d3xx/GetVersion.h>
@@ -62,7 +64,8 @@ public:
     np.param("timeout_millis", this->timeout_millis_, 500);
     np.param("timeout_tolerance_secs", this->timeout_tolerance_secs_, 5.0);
     np.param("publish_viz_images", this->publish_viz_images_, false);
-    np.param("frame_id_base", frame_id_base, std::string(ros::this_node::getName()).substr(1));
+    np.param("frame_id_base", frame_id_base,
+             std::string(ros::this_node::getName()).substr(1));
 
     this->schema_mask_ = static_cast<std::uint16_t>(schema_mask);
 
