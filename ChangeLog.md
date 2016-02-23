@@ -1,31 +1,31 @@
-## Changes between o3d3xx-ros 0.2.0 and 0.2.1
+# Changes between o3d3xx-ros 0.2.0 and 0.2.1
 
-## Frame id is configurable and topic names are relative
+### Frame id is configurable and topic names are relative
 
 * See [PR17](https://github.com/lovepark/o3d3xx-ros/pull/17)
 
-## libo3d3xx 0.4.0
+### libo3d3xx 0.4.0
 
 * The new modularized `libo3d3xx` is now used as the underlying driver.
 
-## test/test_services
+### test/test_services
 
 * New test to ensure calling the `/Dump` and `/Config` services work.
 
-## cmake/FindXXX
+### cmake/FindXXX
 
 * Copied the following FindXXX cmake scripts from `libo3d3xx`:
   * Findo3d3xx\_camera
   * Findo3d3xx\_framegrabber
   * Findo3d3xx\_image
 
-## Deprecations and Eliminations
+### Deprecations and Eliminations
 
 * FileWriteNode has been removed from project. Use `rosbag`.
 
-## Changes between o3d3xx-ros 0.1.8 and 0.2.0
+# Changes between o3d3xx-ros 0.1.8 and 0.2.0
 
-## o3d3xx_node
+### o3d3xx_node
 
 * Aware of pluggable pcic schema masks
 * Publishes unit vectors (on a latched topic)
@@ -36,7 +36,7 @@
   camera frame (using ROS conventions) and the other data are marked as in the
   optical frame (O3D conventions).
 
-## launch/camera.launch
+### launch/camera.launch
 
 * You can now pass a schema mask parameter to the camera to selectively choose
   which images are streamed back from the camera to the host.
@@ -50,7 +50,7 @@
   coord frame, the data will need to be transformed. By publishing this
   transform via tf2, users can use the tf2 API to compute the transformation.
 
-## launch/o3d3xx.rviz
+### launch/o3d3xx.rviz
 
 * Added an Axes marker to the display (not selected by default). This is
   necessary if you want to inspect the difference between the camera frame and
@@ -58,11 +58,11 @@
   the coord on an axes marker seems easier to grok than how the tf display is
   rendering.
 
-## cmake/Findlibo3d3xx.cmake
+### cmake/Findlibo3d3xx.cmake
 
 * Aware of new `libo3d3xx` default install location into `/usr`
 
-## test/test_camera.py
+### test/test_camera.py
 
 * Added new unit test that tests:
   - Getting data from the camera
@@ -75,7 +75,7 @@
 NOTE: The unit test(s) currently require the hardware to be present as it works
 with live data.
 
-## Deprecations and Eliminations
+### Deprecations and Eliminations
 
 * The amplitude histogram is no longer being published.
 * The `rviz` config that colors the point cloud pixels with the x-depth has
@@ -84,9 +84,9 @@ with live data.
   minor release and definitely will be vaporized by 1.0.0. Data collection
   pipelines should be updated to use `rosbag` or some other tool.
 
-## Changes between o3d3xx-ros 0.1.7 and 0.1.8
+# Changes between o3d3xx-ros 0.1.7 and 0.1.8
 
-## o3d3xx_node
+### o3d3xx_node
 
 * A new parameter, `timeout_tolerance_secs` has been added. This is a timeout
   period to wait before attempting to restart the underlying frame grabber if
@@ -97,27 +97,27 @@ with live data.
   would break the TCP connection between the underlying ASIO event loop in
   `libo3d3xx` and the O3D camera's PCIC interface. Good for robots.
 
-## Changes between o3d3xx-ros 0.1.6 and 0.1.7
+# Changes between o3d3xx-ros 0.1.6 and 0.1.7
 
-## o3d3xx_node
+### o3d3xx_node
 
 * Publishes the raw amplitude image
 
-## rviz
+### rviz
 
 * The rviz configuration files now stack in the raw amplitude as a new pane
   along with the normalized amplitude and the amplitude histogram.
 
-## launch/throttled.launch
+### launch/throttled.launch
 
 * throttles the `raw_amplitude` topic
 
-## file_writer_node
+### file_writer_node
 
 * The `raw_amplitude` image is now serialized to the file system as a
   (losslessly compressed) PNG.
 
-## Changes between o3d3xx-ros 0.1.5 and 0.1.6
+# Changes between o3d3xx-ros 0.1.5 and 0.1.6
 
 ### launch/throttled.launch
 
@@ -134,7 +134,7 @@ with live data.
 * The `xyz_image` is now serialized to the file system in OpenCV FileStorage
   format (YAML).
 
-## Changes between o3d3xx-ros 0.1.4 and 0.1.5
+# Changes between o3d3xx-ros 0.1.4 and 0.1.5
 
 ### o3d3xx_node
 
@@ -153,7 +153,7 @@ with live data.
 
 * Fixed the parent-child relationship between the tf frames
 
-## Changes between o3d3xx-ros 0.1.3 and 0.1.4
+# Changes between o3d3xx-ros 0.1.3 and 0.1.4
 
 ### o3d3xx_node
 
@@ -174,4 +174,4 @@ with live data.
 * A dump of the camera configuration (JSON) is now written to the output
   directory upon launching the node, prior to data capture.
 
-## The initial release of o3d3xx-ros was 0.1.3
+# The initial release of o3d3xx-ros was 0.1.3
