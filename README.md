@@ -53,6 +53,11 @@ Software Compatibility Matrix
              <td>0.4.0</td>
              <td>Indigo</td>
          </tr>
+         <tr>
+             <td>0.2.2</td>
+             <td>0.4.0, 0.4.1</td>
+             <td>Indigo</td>
+        </tr>
 </table>
 
 Prerequisites

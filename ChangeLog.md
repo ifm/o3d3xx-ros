@@ -1,3 +1,7 @@
+# Changes between o3d3xx-ros 0.2.1 and 0.2.2
+
+* Loosened up the libo3d3xx version checking in CMakeLists.txt
+
 # Changes between o3d3xx-ros 0.2.0 and 0.2.1
 
 ### Frame id is configurable and topic names are relative
