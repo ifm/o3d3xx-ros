@@ -61,7 +61,6 @@ include_directories(
   )
 
 add_executable(o3d3xx_node src/o3d3xx_node.cpp)
-
 target_link_libraries(o3d3xx_node
   ${catkin_LIBRARIES}
   ${O3D3XX_CAMERA_LIBRARIES}

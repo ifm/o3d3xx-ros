@@ -37,7 +37,7 @@ class TestCamera(unittest.TestCase):
         self.extrinsics_ = None
 
     def test_camera(self):
-        time.sleep(2.0) # <-- let rosmaster and camera node start
+        #time.sleep(2.0) # <-- let rosmaster and camera node start
         rospy.init_node('test_camera')
 
         self.bridge_ = CvBridge()
@@ -57,9 +57,9 @@ class TestCamera(unittest.TestCase):
         # If it takes more than 10 secs to run our test, something is wrong.
         timeout_t = time.time() + 10.0
         rate = rospy.Rate(10.0)
-        while (not rospy.is_shutdown() and
-               not self.success and
-               time.time() < timeout_t):
+        while ((not rospy.is_shutdown()) and
+               (not self.success) and
+               (time.time() < timeout_t)):
             # Make sure we have all the data we need to compute
             if ((self.rdis_ is not None) and
                 (self.cloud_ is not None) and

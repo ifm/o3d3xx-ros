@@ -58,6 +58,11 @@ Software Compatibility Matrix
              <td>0.4.0, 0.4.1, 0.4.2</td>
              <td>Indigo</td>
         </tr>
+         <tr>
+             <td>0.2.3</td>
+             <td>0.4.3</td>
+             <td>Kinetic</td>
+        </tr>
 </table>
 
 Prerequisites
@@ -67,9 +72,11 @@ Prerequisites
 2. [ROS Indigo](http://wiki.ros.org/indigo)
 3. [libo3d3xx](https://github.com/lovepark/libo3d3xx)
 
-Additionally, your compiler must support C++11. This package was initially
-developed and tested using g++ 4.8.2 on Ubuntu 14.04 LTS. This is the stock
-gcc-based C++ compiler on Ubuntu 14.04.
+Additionally, your compiler must support C++11. This package has been validated
+with:
+
+* g++ 4.8.2 on Ubuntu 14.04 LTS, ROS Indigo
+* g++ 5.3.x on Ubuntu 16.04 LTS, ROS Kinetic
 
 Building and Installing the Software
 ------------------------------------
@@ -160,10 +167,8 @@ looks basically like:
 Now we are ready to build the code.
 
     $ cd ~/dev/o3d3xx-catkin
-    $ catkin_make
-    $ cd build
-    $ make run_tests
-    $ cd ..
+    $ catkin_make -DCATKIN_ENABLE_TESTING=ON
+    $ catkin_make run_tests
     $ catkin_make -DCMAKE_INSTALL_PREFIX=${LPR_ROS}/o3d3xx install
 
 The ROS package should now be installed in `~/ros/o3d3xx`. To test everything

@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<package>
+<package format="2">
 
   <name>o3d3xx</name>
-  <version>0.2.2</version>
+  <version>0.2.3</version>
   <description>O3D3xx ToF Camera ROS package</description>
   <maintainer email="tom@loveparkrobotics.com">Tom Panzarella</maintainer>
   <license>Apache 2</license>
@@ -10,23 +10,14 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  <build_depend>image_transport</build_depend>
-  <build_depend>pcl_ros</build_depend>
-  <build_depend>cv_bridge</build_depend>
-  <build_depend>roscpp</build_depend>
-  <build_depend>sensor_msgs</build_depend>
-  <build_depend>std_msgs</build_depend>
-  <build_depend>tf</build_depend>
-  <build_depend>message_generation</build_depend>
-
-  <run_depend>image_transport</run_depend>
-  <run_depend>pcl_ros</run_depend>
-  <run_depend>cv_bridge</run_depend>
-  <run_depend>roscpp</run_depend>
-  <run_depend>sensor_msgs</run_depend>
-  <run_depend>std_msgs</run_depend>
-  <run_depend>tf</run_depend>
-  <run_depend>message_runtime</run_depend>
+  <depend>image_transport</depend>
+  <depend>pcl_ros</depend>
+  <depend>cv_bridge</depend>
+  <depend>roscpp</depend>
+  <depend>sensor_msgs</depend>
+  <depend>std_msgs</depend>
+  <depend>tf</depend>
+  <depend>message_generation</depend>
 
   <test_depend>rostest</test_depend>
 
