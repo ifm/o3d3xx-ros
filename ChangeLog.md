@@ -1,3 +1,7 @@
+# Changes between o3d3xx-ros 0.2.2 and 0.2.3
+
+* Tweaks to support Kinetic Kame on Ubuntu 16.04 (Xenial)
+
 # Changes between o3d3xx-ros 0.2.1 and 0.2.2
 
 * Loosened up the libo3d3xx version checking in CMakeLists.txt

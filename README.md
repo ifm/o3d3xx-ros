@@ -58,10 +58,10 @@ Software Compatibility Matrix
              <td>0.4.0, 0.4.1, 0.4.2</td>
              <td>Indigo</td>
         </tr>
-         <tr>
+        <tr>
              <td>0.2.3</td>
              <td>0.4.3</td>
-             <td>Kinetic</td>
+             <td>Indigo, Kinetic</td>
         </tr>
 </table>
 
@@ -69,7 +69,7 @@ Prerequisites
 -------------
 
 1. [Ubuntu 14.04](http://www.ubuntu.com)
-2. [ROS Indigo](http://wiki.ros.org/indigo)
+2. [ROS Indigo or Kinetic](http://wiki.ros.org/install)
 3. [libo3d3xx](https://github.com/lovepark/libo3d3xx)
 
 Additionally, your compiler must support C++11. This package has been validated
