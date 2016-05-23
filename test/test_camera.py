@@ -37,7 +37,7 @@ class TestCamera(unittest.TestCase):
         self.extrinsics_ = None
 
     def test_camera(self):
-        #time.sleep(2.0) # <-- let rosmaster and camera node start
+        time.sleep(2.0) # <-- let rosmaster and camera node start
         rospy.init_node('test_camera')
 
         self.bridge_ = CvBridge()
