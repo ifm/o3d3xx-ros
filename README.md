@@ -68,7 +68,7 @@ Software Compatibility Matrix
 Prerequisites
 -------------
 
-1. [Ubuntu 14.04](http://www.ubuntu.com)
+1. [Ubuntu 14.04 or 16.04](http://www.ubuntu.com)
 2. [ROS Indigo or Kinetic](http://wiki.ros.org/install)
 3. [libo3d3xx](https://github.com/lovepark/libo3d3xx)
 
