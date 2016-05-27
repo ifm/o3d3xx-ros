@@ -5,9 +5,9 @@ set(CMAKE_MODULE_PATH
   "${PROJECT_SOURCE_DIR}/cmake"
   ${CMAKE_MODULE_PATH}
   )
-find_package(o3d3xx_camera 0.4.0 REQUIRED)
-find_package(o3d3xx_framegrabber 0.4.0 REQUIRED)
-find_package(o3d3xx_image 0.4.0 REQUIRED)
+find_package(o3d3xx_camera 0.4.4 REQUIRED)
+find_package(o3d3xx_framegrabber 0.4.4 REQUIRED)
+find_package(o3d3xx_image 0.4.4 REQUIRED)
 find_package(Boost REQUIRED COMPONENTS filesystem)
 find_package(catkin REQUIRED COMPONENTS
              image_transport
