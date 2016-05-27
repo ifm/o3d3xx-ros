@@ -63,6 +63,11 @@ Software Compatibility Matrix
              <td>0.4.3</td>
              <td>Indigo, Kinetic</td>
         </tr>
+        <tr>
+             <td>0.2.4</td>
+             <td>0.4.4</td>
+             <td>Indigo, Kinetic</td>
+        </tr>
 </table>
 
 Prerequisites
@@ -364,6 +369,13 @@ graph.
         removing the current active application.
         </td>
     </tr>
+    <tr>
+        <td>/o3d3xx/camera/Trigger</td>
+        <td><a href="srv/Trigger.srv">Trigger.srv</a></td>
+        <td>
+        Sends a software trigger signal to the camera.
+        </td>
+    </tr>
 </table>
 
 #### Parameters
@@ -419,6 +431,23 @@ graph.
         are `depth_viz` and `good_bad_pixels` (they are described
         above in the `Topics` section). These <i>viz images</i> are intended
         for human analysis and visualization in `rviz`.
+        </td>
+    </tr>
+    <tr>
+        <td>assume_sw_trigger</td>
+        <td>bool</td>
+        <td>
+        If your application intends to use software triggering (as opposed to a
+        free-running framegrabber), this parameter does four things. First, it
+        will not print out framegrabber timeout messages to the
+        rosconsole. Second, it will set, a-priori, the `timeout_millis`
+        parameter to 500 milliseconds (this is so that the node will release
+        the framegrabber mutex in the main publishing loop). Third, this will
+        set the `timeout_tolerance_secs` to 600 seconds so that the
+        framegrabber is not constantly getting recycled unnecessarily. Fourth,
+        it sets the `GLOG_minloglevel` environment variable to 3 (ERROR). This
+        is so the underlying `libo3d3xx` library does not fill your log files
+        with timeout messages which it emits at the WARNING level.
         </td>
     </tr>
     <tr>

@@ -12,6 +12,7 @@
   <arg name="publish_viz_images" default="true"/>
   <arg name="frame_id_base" default="$(arg ns)/$(arg nn)" />
   <arg name="respawn" default="false"/>
+  <arg name="assume_sw_triggered" default="false"/>
 
   <!-- TODO: Consider removing the group tag and let the includer determine the
       namespace using a group. -->
@@ -26,11 +27,23 @@
       <param name="xmlrpc_port" value="$(arg xmlrpc_port)"/>
       <param name="password" value="$(arg password)"/>
       <param name="schema_mask" value="$(arg schema_mask)"/>
-      <param name="timeout_millis" value="$(arg timeout_millis)"/>
-      <param name="timeout_tolerance_secs"
-             value="$(arg timeout_tolerance_secs)"/>
       <param name="publish_viz_images" value="$(arg publish_viz_images)"/>
       <param name="frame_id_base" value="$(arg frame_id_base)" />
+      <param name="assume_sw_triggered" value="$(arg assume_sw_triggered)"/>
+
+      <!-- if assume_sw_triggered == True -->
+      <param name="timeout_millis" value="500"
+             if="$(arg assume_sw_triggered)"/>
+      <param name="timeout_tolerance_secs" value="600.0"
+             if="$(arg assume_sw_triggered)"/>
+      <env name="GLOG_minloglevel" value="3"
+           if="$(arg assume_sw_triggered)"/>
+      <!-- if assume_sw_triggered == False -->
+      <param name="timeout_millis" value="$(arg timeout_millis)"
+             unless="$(arg assume_sw_triggered)"/>
+      <param name="timeout_tolerance_secs"
+             value="$(arg timeout_tolerance_secs)"
+             unless="$(arg assume_sw_triggered)"/>
 
       <!-- TODO: Consider removing $(arg nn) from your topics to keep them
           shorter, give the includer more flexibility, and all of these remaps
@@ -52,6 +65,7 @@
       <remap from="Dump" to="$(arg nn)/Dump"/>
       <remap from="Config" to="$(arg nn)/Config"/>
       <remap from="Rm" to="$(arg nn)/Rm"/>
+      <remap from="Trigger" to="$(arg nn)/Trigger"/>
 
     </node>
 

@@ -38,6 +38,7 @@
 #include <o3d3xx/GetVersion.h>
 #include <o3d3xx/Rm.h>
 #include <o3d3xx/Extrinsics.h>
+#include <o3d3xx/Trigger.h>
 
 class O3D3xxNode
 {
@@ -47,6 +48,7 @@ public:
       timeout_millis_(500),
       timeout_tolerance_secs_(5.0),
       publish_viz_images_(false),
+      assume_sw_triggered_(false),
       spinner_(new ros::AsyncSpinner(1))
   {
     std::string camera_ip;
@@ -57,6 +59,7 @@ public:
 
     ros::NodeHandle nh; // public
     ros::NodeHandle np("~"); // private
+
     np.param("ip", camera_ip, o3d3xx::DEFAULT_IP);
     np.param("xmlrpc_port", xmlrpc_port, (int) o3d3xx::DEFAULT_XMLRPC_PORT);
     np.param("password", password, o3d3xx::DEFAULT_PASSWORD);
@@ -64,6 +67,7 @@ public:
     np.param("timeout_millis", this->timeout_millis_, 500);
     np.param("timeout_tolerance_secs", this->timeout_tolerance_secs_, 5.0);
     np.param("publish_viz_images", this->publish_viz_images_, false);
+    np.param("assume_sw_triggered", this->assume_sw_triggered_, false);
     np.param("frame_id_base", frame_id_base,
              std::string(ros::this_node::getName()).substr(1));
 
@@ -134,6 +138,12 @@ public:
       ("Rm", std::bind(&O3D3xxNode::Rm, this,
                         std::placeholders::_1,
                         std::placeholders::_2));
+
+    this->trigger_srv_ =
+      nh.advertiseService<o3d3xx::Trigger::Request, o3d3xx::Trigger::Response>
+      ("Trigger", std::bind(&O3D3xxNode::Trigger, this,
+                            std::placeholders::_1,
+                            std::placeholders::_2));
   }
 
   /**
@@ -167,7 +177,14 @@ public:
       if (!this->fg_->WaitForFrame(buff.get(), this->timeout_millis_))
       {
         fg_lock.unlock();
-        ROS_WARN("Timeout waiting for camera!");
+        if (! this->assume_sw_triggered_)
+          {
+            ROS_WARN("Timeout waiting for camera!");
+          }
+        else
+          {
+            ros::Duration(.001).sleep();
+          }
 
         if ((ros::Time::now() - last_frame).toSec() >
             this->timeout_tolerance_secs_)
@@ -326,6 +343,31 @@ public:
   }
 
   /**
+   * Implements the `Trigger' service.
+   *
+   * For cameras whose active application is set to software triggering as
+   * opposed to free-running, this service send the trigger for image
+   * acquisition to the camera.
+   */
+  bool Trigger(o3d3xx::Trigger::Request &req,
+               o3d3xx::Trigger::Response &res)
+  {
+    std::lock_guard<std::mutex> lock(this->fg_mutex_);
+    res.status = 0;
+
+    try
+      {
+        this->fg_->SWTrigger();
+      }
+    catch (const o3d3xx::error_t& ex)
+      {
+        res.status = ex.code();
+      }
+
+    return true;
+  }
+
+  /**
    * Implements the `Dump' service.
    *
    * The `Dump' service will dump the current camera configuration to a JSON
@@ -442,6 +484,7 @@ private:
   int timeout_millis_;
   double timeout_tolerance_secs_;
   bool publish_viz_images_;
+  bool assume_sw_triggered_;
   std::unique_ptr<ros::AsyncSpinner> spinner_;
   o3d3xx::Camera::Ptr cam_;
   o3d3xx::FrameGrabber::Ptr fg_;
@@ -465,6 +508,7 @@ private:
   ros::ServiceServer dump_srv_;
   ros::ServiceServer config_srv_;
   ros::ServiceServer rm_srv_;
+  ros::ServiceServer trigger_srv_;
 
 }; // end: class O3D3xxNode
 

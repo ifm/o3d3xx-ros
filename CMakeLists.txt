@@ -36,6 +36,7 @@ add_service_files(
   Dump.srv
   Config.srv
   Rm.srv
+  Trigger.srv
   )
 
 generate_messages(

@@ -1,3 +1,10 @@
+# Changes between o3d3xx-ros 0.2.3 and 0.2.4
+
+* Implemented a new `/Trigger` service for cameras configured in
+  software-triggered mode.
+* Added a `assume_sw_trigger` parameter to the camera launch file to optimize
+  some settings when running in software triggered mode.
+
 # Changes between o3d3xx-ros 0.2.2 and 0.2.3
 
 * Tweaks to support Kinetic Kame on Ubuntu 16.04 (Xenial)
