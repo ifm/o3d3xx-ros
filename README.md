@@ -68,6 +68,11 @@ Software Compatibility Matrix
              <td>0.4.4</td>
              <td>Indigo, Kinetic</td>
         </tr>
+        <tr>
+             <td>0.2.5</td>
+             <td>0.4.5</td>
+             <td>Indigo, Kinetic</td>
+        </tr>
 </table>
 
 Prerequisites

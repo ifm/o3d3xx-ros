@@ -1,3 +1,7 @@
+# Changes between o3d3xx-ros 0.2.4 and 0.2.5
+
+* Addressed bug in unit tests (services test)
+
 # Changes between o3d3xx-ros 0.2.3 and 0.2.4
 
 * Implemented a new `/Trigger` service for cameras configured in

@@ -106,7 +106,6 @@ install(TARGETS
 
 if(CATKIN_ENABLE_TESTING)
   find_package(rostest REQUIRED)
-  add_rostest(test/camera.test)
-  add_rostest(test/services.test)
+  add_rostest(test/o3d3xx.test)
   catkin_add_nosetests(test)
 endif()

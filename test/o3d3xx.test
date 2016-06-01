@@ -5,6 +5,11 @@
     <arg name="timeout_millis" value="1000"/>
   </include>
 
+  <test pkg="o3d3xx" test-name="test_services" type="test_services.py">
+    <remap from="/Dump" to="/o3d3xx/camera/Dump"/>
+    <remap from="/Config" to="/o3d3xx/camera/Config"/>
+  </test>
+
   <test pkg="o3d3xx" test-name="test_camera" type="test_camera.py">
     <remap from="/depth" to="/o3d3xx/camera/depth"/>
     <remap from="/unit_vectors" to="/o3d3xx/camera/unit_vectors"/>
