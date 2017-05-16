@@ -70,7 +70,7 @@ Software Compatibility Matrix
         </tr>
         <tr>
              <td>0.2.5</td>
-             <td>0.4.5, 0.4.6, 0.4.8, 0.4.9, 0.5.0</td>
+             <td>0.4.5, 0.4.6, 0.4.8, 0.4.9, 0.5.0, 0.6.0</td>
              <td>Indigo, Kinetic</td>
         </tr>
 </table>
