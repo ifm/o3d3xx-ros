@@ -101,14 +101,12 @@ You should first ensure that you have installed ROS by following
 Next, you should be sure to install
 [libo3d3xx](https://github.com/lovepark/libo3d3xx). This ROS package assumes
 you have installed libo3d3xx via the supported debian installer. Step-by-step
-instructions for that process now follows:
-
-    $ git clone https://github.com/lovepark/libo3d3xx.git
-    $ cd libo3d3xx
-    $ mkdir build
-    $ cd build
-    $ cmake ..
-    $ make
+instructions for that process are located
+[here](https://github.com/lovepark/libo3d3xx#full-instructions). If you already
+have `libo3d3xx` installed you can skip this step. However, it is important to
+point out that the table above denotes a software compatibility matrix and you
+should be sure to link `o3d3xx-ros` against a compatible version of
+`libo3d3xx`.
 
 We now move on to building o3d3xx-ros.
 
