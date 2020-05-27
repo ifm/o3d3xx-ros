@@ -1,3 +1,9 @@
+> :warning: **DEPRECATION NOTICE**: The libo3d3xx libary has been
+> superceded by [ifm3d](https://github.com/ifm/ifm3d). Similarly,
+> this package has been deprecated in favor of
+> [ifm3d-ros](https://github.com/ifm/ifm3d-ros) which is also available
+> in the ROS distribution (starting with ROS Kinetic)
+
 o3d3xx-ros
 ==========
 o3d3xx-ros is a wrapper around
